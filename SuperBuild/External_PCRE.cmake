@@ -1,3 +1,7 @@
+if( NOT EXTERNAL_BINARY_DIRECTORY )
+  set( EXTERNAL_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
+endif()
+
 # Make sure this file is included only once by creating globally unique varibles
 # based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -41,15 +45,15 @@ SlicerMacroCheckExternalProjectDependency(${proj})
 #
 
 # follow the standard EP_PREFIX locations
-set(pcre_binary_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE-prefix/src/PCRE-build)
-set(pcre_source_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE-prefix/src/PCRE)
-set(pcre_install_dir ${CMAKE_CURRENT_BINARY_DIR}/PCRE)
+set(pcre_binary_dir ${EXTERNAL_BINARY_DIRECTORY}/PCRE-prefix/src/PCRE-build)
+set(pcre_source_dir ${EXTERNAL_BINARY_DIRECTORY}/PCRE-prefix/src/PCRE)
+set(pcre_install_dir ${EXTERNAL_BINARY_DIRECTORY}/PCRE)
 
 configure_file(
   ${CMAKE_CURRENT_LIST_DIR}/External_PCRE_configure_step.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/External_PCRE_configure_step.cmake
+  ${EXTERNAL_BINARY_DIRECTORY}/External_PCRE_configure_step.cmake
   @ONLY)
-set(pcre_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/External_PCRE_configure_step.cmake)
+set(pcre_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${EXTERNAL_BINARY_DIRECTORY}/External_PCRE_configure_step.cmake)
 
 ExternalProject_Add(${proj}
   URL http://downloads.sourceforge.net/project/pcre/pcre/8.32/pcre-8.32.tar.gz

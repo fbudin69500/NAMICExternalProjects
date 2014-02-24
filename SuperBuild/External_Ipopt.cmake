@@ -1,3 +1,10 @@
+if( NOT EXTERNAL_SOURCE_DIRECTORY )
+  set( EXTERNAL_SOURCE_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/ExternalSources )
+endif()
+if( NOT EXTERNAL_BINARY_DIRECTORY )
+  set( EXTERNAL_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
+endif()
+
 # Make sure this file is included only once by creating globally unique varibles
 # based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -50,16 +57,16 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- Project specific additions here
   set(${proj}_CMAKE_OPTIONS
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_BINARY_DIR}/${proj}-install
+      -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
       -DBUILD_TESTS:BOOL=OFF
       -DBUILD_SHARED_LIBS:BOOL=OFF
   )
 
-  set(${proj}_binary_dir ${CMAKE_CURRENT_BINARY_DIR}/${proj}-build)
-  set(${proj}_source_dir ${CMAKE_CURRENT_BINARY_DIR}/${proj})
-  set(${proj}_install_dir ${CMAKE_CURRENT_BINARY_DIR}/${proj}-install)
+  set(${proj}_binary_dir ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build)
+  set(${proj}_source_dir ${EXTERNAL_SOURCE_DIRECTORY}/${proj})
+  set(${proj}_install_dir ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install)
   set(${proj}_configure_script
     ${CMAKE_CURRENT_BINARY_DIR}/External_Ipopt_configure_step.cmake)
   configure_file(${CMAKE_CURRENT_LIST_DIR}/External_Ipopt_configure_step.cmake.in
@@ -76,8 +83,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     SVN_REPOSITORY ${${proj}_REPOSITORY}
     SVN_REVISION -r ${${proj}_GIT_TAG}
     SVN_TRUST_CERT 1
-    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
-    BINARY_DIR ${proj}-build
+    SOURCE_DIR ${EXTERNAL_SOURCE_DIRECTORY}/${proj}
+    BINARY_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
     LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards

@@ -1,3 +1,10 @@
+if( NOT EXTERNAL_SOURCE_DIRECTORY )
+  set( EXTERNAL_SOURCE_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/ExternalSources )
+endif()
+if( NOT EXTERNAL_BINARY_DIRECTORY )
+  set( EXTERNAL_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
+endif()
+
 # Make sure this file is included only once by creating globally unique varibles
 # based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -25,15 +32,19 @@ set(${extProjName}_REQUIRED_VERSION "5.10")  #If a required version is necessary
 #  unset(${extProjName}_DIR CACHE)
 #endif()
 
+#Sanity checks are annoying if you want to switch from ON to OFF "USE_SYSTEM..."
 # Sanity checks
-if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
-  message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
-endif()
+#if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
+#  message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
+#endif()
 
 # Set dependency list
 set(${proj}_DEPENDENCIES "")
 if (${PROJECT_NAME}_USE_PYTHONQT)
   list(APPEND ${proj}_DEPENDENCIES python)
+endif()
+if( ${PRIMARY_PROJECT_NAME}_USE_QT )
+  list(APPEND ${proj}_DEPENDENCIES Qt4)
 endif()
 
 # Include dependent projects if any
@@ -114,21 +125,21 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   set(VTK_TCL_ARGS)
   if(VTK_WRAP_TCL)
     if(WIN32)
-      set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/tcl84.lib)
-      set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/tk84.lib)
-      set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh.exe)
+      set(slicer_TCL_LIB ${EXTERNAL_BINARY_DIRECTORY}/tcl-build/lib/tcl84.lib)
+      set(slicer_TK_LIB ${EXTERNAL_BINARY_DIRECTORY}/tcl-build/lib/tk84.lib)
+      set(slicer_TCLSH ${EXTERNAL_BINARY_DIRECTORY}/tcl-build/bin/tclsh.exe)
     elseif(APPLE)
-      set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtcl8.4.dylib)
-      set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtk8.4.dylib)
-      set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh84)
+      set(slicer_TCL_LIB ${EXTERNAL_BINARY_DIRECTORY}/tcl-build/lib/libtcl8.4.dylib)
+      set(slicer_TK_LIB ${EXTERNAL_BINARY_DIRECTORY}/tcl-build/lib/libtk8.4.dylib)
+      set(slicer_TCLSH ${EXTERNAL_BINARY_DIRECTORY}/tcl-build/bin/tclsh84)
     else()
-      set(slicer_TCL_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtcl8.4.so)
-      set(slicer_TK_LIB ${CMAKE_BINARY_DIR}/tcl-build/lib/libtk8.4.so)
-      set(slicer_TCLSH ${CMAKE_BINARY_DIR}/tcl-build/bin/tclsh84)
+      set(slicer_TCL_LIB ${EXTERNAL_BINARY_DIRECTORY}/tcl-build/lib/libtcl8.4.so)
+      set(slicer_TK_LIB ${EXTERNAL_BINARY_DIRECTORY}/tcl-build/lib/libtk8.4.so)
+      set(slicer_TCLSH ${EXTERNAL_BINARY_DIRECTORY}/tcl-build/bin/tclsh84)
     endif()
     set(VTK_TCL_ARGS
-      -DTCL_INCLUDE_PATH:PATH=${CMAKE_BINARY_DIR}/tcl-build/include
-      -DTK_INCLUDE_PATH:PATH=${CMAKE_BINARY_DIR}/tcl-build/include
+      -DTCL_INCLUDE_PATH:PATH=${EXTERNAL_BINARY_DIRECTORY}/tcl-build/include
+      -DTK_INCLUDE_PATH:PATH=${EXTERNAL_BINARY_DIRECTORY}/tcl-build/include
       -DTCL_LIBRARY:FILEPATH=${slicer_TCL_LIB}
       -DTK_LIBRARY:FILEPATH=${slicer_TK_LIB}
       -DTCL_TCLSH:FILEPATH=${slicer_TCLSH}
@@ -144,10 +155,11 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   endif()
 
   set(${proj}_CMAKE_OPTIONS
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
+      -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
       -DVTK_USE_PARALLEL:BOOL=ON
+      -DVTK_USE_GL2PS:BOOL=ON
       -DVTK_DEBUG_LEAKS:BOOL=${${PROJECT_NAME}_USE_VTK_DEBUG_LEAKS}
       -DVTK_LEGACY_REMOVE:BOOL=OFF
       -DVTK_WRAP_TCL:BOOL=${VTK_WRAP_TCL}
@@ -166,8 +178,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
-    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
-    BINARY_DIR ${proj}-build
+    SOURCE_DIR ${EXTERNAL_SOURCE_DIRECTORY}/${proj}
+    BINARY_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build
     BUILD_COMMAND ${VTK_BUILD_STEP}
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
@@ -194,7 +206,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     -P ${VTKPatchScript}
     )
 
-  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-install/lib/vtk-5.10)
+  set(${extProjName}_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install/lib/vtk-5.10)
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)
@@ -206,6 +218,8 @@ else()
 endif()
 
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
+_expand_external_project_vars()
+set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 
 ProjectDependancyPop(CACHED_extProjName extProjName)
 ProjectDependancyPop(CACHED_proj proj)

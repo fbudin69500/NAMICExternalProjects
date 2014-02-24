@@ -1,3 +1,10 @@
+if( NOT EXTERNAL_SOURCE_DIRECTORY )
+  set( EXTERNAL_SOURCE_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/ExternalSources )
+endif()
+if( NOT EXTERNAL_BINARY_DIRECTORY )
+  set( EXTERNAL_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
+endif()
+
 # Make sure this file is included only once by creating globally unique varibles
 # based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -31,7 +38,9 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
 endif()
 
 # Set dependency list
-set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel VTK DCMTK JPEG TIFF Boost teem ReferenceAtlas OpenCV)
+set( ${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT ON )
+set( ${PRIMARY_PROJECT_NAME}_USE_QT TRUE )
+set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel VTK DCMTK JPEG TIFF Boost teem ReferenceAtlas OpenCV Qt4 )
 
 if(USE_ANTs)
   list(APPEND ${extProjName}_DEPENDENCIES ANTs)
@@ -75,7 +84,7 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
   # message("SlicerExecutionModel_DIR: ${SlicerExecutionModel_DIR}")
   # message("BOOST_INCLUDE_DIR:PATH=${BOOST_INCLUDE_DIR}")
   set(${proj}_CMAKE_OPTIONS
-      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
+      -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=ON
       -DUSE_SYSTEM_ITK:BOOL=ON
@@ -146,12 +155,12 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git")
-  set(${proj}_GIT_TAG "58f2ee81e70cb6dfccd3aa11304a4615915e273f")
+  set(${proj}_GIT_TAG "840d9d785d8542f095057e323c238dddeb8544c6")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
-    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
-    BINARY_DIR ${proj}-build
+    SOURCE_DIR ${EXTERNAL_SOURCE_DIRECTORY}/${proj}
+    BINARY_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
     LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
@@ -168,9 +177,9 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
     DEPENDS
       ${${extProjName}_DEPENDENCIES}
     )
-  set(${extProjName}_DIR ${CMAKE_BINARY_DIR}/${proj}-build)
-  set(${extProjName}_SOURCE_DIR ${CMAKE_BINARY_DIR}/${proj})
-  set(BRAINSCommonLib_DIR    ${CMAKE_BINARY_DIR}/${proj}-build/BRAINSCommonLib)
+  set(${extProjName}_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build)
+  set(${extProjName}_SOURCE_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj})
+  set(BRAINSCommonLib_DIR    ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build/BRAINSCommonLib)
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)

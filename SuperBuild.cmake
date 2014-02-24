@@ -13,19 +13,16 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/Common.cmake)
 #-----------------------------------------------------------------------------
 # Git protocole option
 #-----------------------------------------------------------------------------
-option(${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
+option(USE_GIT_PROTOCOL "If behind a firewall turn this off to use http instead." ON)
 set(git_protocol "git")
-if(NOT ${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL)
+if(NOT USE_GIT_PROTOCOL)
   set(git_protocol "http")
 endif()
 
 find_package(Git REQUIRED)
 
-# I don't know who removed the Find_Package for QT, but it needs to be here
-# in order to build VTK if ${PRIMARY_PROJECT_NAME}_USE_QT is set.
-if(${PRIMARY_PROJECT_NAME}_USE_QT)
-find_package(Qt4 REQUIRED)
-endif()
+set(EXTERNAL_SOURCE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "Select where external packages will be downloaded" )
+set(EXTERNAL_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "Select where external packages will be compiled and installed" )
 
 #-----------------------------------------------------------------------------
 # Enable and setup External project global properties
@@ -75,7 +72,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Superbuild option(s)
 #-----------------------------------------------------------------------------
-option(BUILD_STYLE_UTILS "Build uncrustify, cppcheck, & KWStyle" ON)
+option(BUILD_STYLE_UTILS "Build uncrustify, cppcheck, & KWStyle" OFF)
 CMAKE_DEPENDENT_OPTION(
   USE_SYSTEM_Uncrustify "Use system Uncrustify program" OFF
   "BUILD_STYLE_UTILS" OFF
@@ -91,66 +88,87 @@ CMAKE_DEPENDENT_OPTION(
 
 set(EXTERNAL_PROJECT_BUILD_TYPE "Release" CACHE STRING "Default build type for support libraries")
 
-option(USE_SYSTEM_zlib "build using the system version of zlib" OFF)
-option(USE_SYSTEM_ITK "Build using an externally defined version of ITK" OFF)
-option(USE_SYSTEM_SlicerExecutionModel "Build using an externally defined version of SlicerExecutionModel"  OFF)
-option(USE_SYSTEM_VTK "Build using an externally defined version of VTK" OFF)
-option(USE_SYSTEM_DCMTK "Build using an externally defined version of DCMTK" OFF)
-option(${PROJECT_NAME}_BUILD_DICOM_SUPPORT "Build Dicom Support" ON)
-
-option(BUILD_CALATK "build the calatk project" ON)
-set(CALATK_DEP)
-if(${BUILD_CALATK})
-  set(CALATK_DEP calatk)
-endif()
-
 #------------------------------------------------------------------------------
 # ${PRIMARY_PROJECT_NAME} dependency list
 #------------------------------------------------------------------------------
 set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 
+set( ListProjectsQt 
+  BRAINSTools
+  DTIPrep
+  ShapePopulationViewer
+  FiberViewerLight
+  DTIAtlasBuilder 
+  DTI_Tract_Stat
+   )
 
-## for i in SuperBuild/*; do  echo $i |sed 's/.*External_\([a-zA-Z]*\).*/\1/g'|fgrep -v cmake|fgrep -v Template; done|sort -u
-set(${PRIMARY_PROJECT_NAME}_DEPENDENCIES
+set( ListProjectsDICOM
+  BRAINSTools
+  DTIPrep
+  )
+
+set( ListProjects
+  BRAINSTools
+  DTIPrep
+  ShapePopulationViewer
+  FiberViewerLight
+  DTIAtlasBuilder 
+  DTI_Tract_Stat
   MRParameterMaps
-  Eigen
-  SlicerExecutionModel
-  ${ITK_EXTERNAL_NAME}
-  DCMTK
-  VTK
-  OpenCV
-  JPEG
-  GDCM
-#  Boost
   DoubleConvert
   NIPYPE
   ReferenceAtlas
   MultiAtlas
   DTIReg
   DTIProcess
-  BRAINSTools
-  DTIPrep
-  teem
+  SlicerCLI
   SlicerJointRicianAnisotropicLMMSEFilter
   UKF
   UnbiasedNonLocalMeans
   ANTs
-## These packages are not yet needed, but will evenutally be needed.
-  #qhull
-  #${CALATK_DEP}
-  #tract_querier
-  #BatchMake
-  #  -- This recursively builds DTIProcess, but does not pass the flags DTI_Tract_Stat
-  #niral_utilities
-  #LogSymmetricDemons
-  #python
+  SimpleITK
+  NIPYPE
+  ITKTransformTools
+  ResampleDTIlogEuclidean
+  niral_utilities
+  SPHARM-PDM
+)
+
+ foreach( var ${ListProjects})
+  option(BUILD_${var} "build the ${var} project" OFF)
+  if( BUILD_${var} )
+    List( APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES ${var} )
+  else()
+    List( LENGTH ${PRIMARY_PROJECT_NAME}_DEPENDENCIES dependencies_size )
+    if( dependencies_size GREATER 0 )
+      List( REMOVE_ITEM ${PRIMARY_PROJECT_NAME}_DEPENDENCIES ${var} )
+    endif()
+  endif()
+endForeach()
+
+foreach( var ${ListProjectsQt} )
+  if( BUILD_${var} )
+    set( ${PRIMARY_PROJECT_NAME}_USE_QT TRUE )
+  endif()
+endforeach()
+
+foreach( var ${ListProjectsDICOM} )
+  if( BUILD_${var} )
+    set( ${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT ON )
+  endif()
+endforeach()
+
+if( BUILD_SPHARM-PDM AND ${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT )
+  List( REMOVE_ITEM ${PRIMARY_PROJECT_NAME}_DEPENDENCIES SPHARM-PDM )
+  List( INSERT ${PRIMARY_PROJECT_NAME}_DEPENDENCIES 0 SPHARM-PDM )
+endif()
+
+CMAKE_DEPENDENT_OPTION(
+  BUILD_DWIAtlas "Build DWIAtlas as part of DTIProcess" OFF
+  "BUILD_DTIProcess" OFF
   )
 
-set(${PRIMARY_PROJECT_NAME}_USE_QT ON)
-list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES SimpleITK)
-list(APPEND SimpleITK_DEPENDENCIES PCRE Swig)
-list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES NIPYPE)
-#list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES Ipopt)
+#set( BUILD_DICOM_SUPPORT ON CACHE BOOL "Build DICOM Support")
 
 if(BUILD_STYLE_UTILS)
   list(APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES Cppcheck KWStyle ) #Uncrustify)
@@ -242,27 +260,64 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   CMAKE_MODULE_LINKER_FLAGS:STRING
   SITE:STRING
   BUILDNAME:STRING
-  ${PROJECT_NAME}_BUILD_DICOM_SUPPORT:BOOL
   PYTHON_EXECUTABLE:FILEPATH
   PYTHON_INCLUDE_DIR:PATH
   PYTHON_LIBRARY:FILEPATH
   )
 
-if(${PRIMARY_PROJECT_NAME}_USE_QT)
-  list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
-    ${PRIMARY_PROJECT_NAME}_USE_QT:BOOL
-    QT_QMAKE_EXECUTABLE:PATH
-    QT_MOC_EXECUTABLE:PATH
-    QT_UIC_EXECUTABLE:PATH
-    )
-endif()
-
 _expand_external_project_vars()
 set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 set(extProjName ${PRIMARY_PROJECT_NAME})
 set(proj        ${PRIMARY_PROJECT_NAME})
-SlicerMacroCheckExternalProjectDependency(${proj})
 
+List( LENGTH ${PRIMARY_PROJECT_NAME}_DEPENDENCIES dependencies_size )
+if( dependencies_size GREATER 0 )
+  SlicerMacroCheckExternalProjectDependency(${proj})
+endif()
+
+# I don't know who removed the Find_Package for QT, but it needs to be here
+# in order to build VTK if ${PRIMARY_PROJECT_NAME}_USE_QT is set.
+#if(USE_QT)
+#  find_package(Qt4 REQUIRED)
+#endif()
+
+#if(USE_QT)
+#  list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
+#    ${PRIMARY_PROJECT_NAME}_USE_QT:BOOL
+#    QT_QMAKE_EXECUTABLE:PATH
+#    QT_MOC_EXECUTABLE:PATH
+#    QT_UIC_EXECUTABLE:PATH
+#    )
+if( NOT ${PRIMARY_PROJECT_NAME}_USE_QT )
+  unset( QT_QMAKE_EXECUTABLE CACHE )
+  unset( QT_MOC_EXECUTABLE CACHE )
+  unset( QT_UIC_EXECUTABLE CACHE )
+endif()
+
+set( LIBRARIES
+zlib
+teem
+ITK
+SlicerExecutionModel
+VTK
+DCMTK
+)
+
+
+foreach( var ${LIBRARIES} )
+  if( var STREQUAL "ITK" )
+    set( extvar ITKv4 )
+  else()
+    set( extvar ${var} )
+  endif()
+  if(External_${extvar}_FILE_INCLUDED )
+    option(USE_SYSTEM_${var} "build using the system version of ${var}" OFF)
+  else()
+    unset( USE_SYSTEM_${var} CACHE )
+  endif()
+endforeach()
+
+set(ITK_EXTERNAL_NAME ITKv${ITK_VERSION_MAJOR})
 #-----------------------------------------------------------------------------
 # Set CMake OSX variable to pass down the external project
 #-----------------------------------------------------------------------------
@@ -287,7 +342,6 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   BUILD_EXAMPLES:BOOL
   BUILD_TESTING:BOOL
   ITK_VERSION_MAJOR:STRING
-  ITK_DIR:PATH
 
   ${PRIMARY_PROJECT_NAME}_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH
   ${PRIMARY_PROJECT_NAME}_CLI_ARCHIVE_OUTPUT_DIRECTORY:PATH

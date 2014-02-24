@@ -1,3 +1,10 @@
+if( NOT EXTERNAL_SOURCE_DIRECTORY )
+  set( EXTERNAL_SOURCE_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/ExternalSources )
+endif()
+if( NOT EXTERNAL_BINARY_DIRECTORY )
+  set( EXTERNAL_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
+endif()
+
 # Make sure this file is included only once by creating globally unique varibles
 # based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -36,15 +43,15 @@ if(NOT SWIG_DIR)
     ExternalProject_Add(${proj}
       URL http://prdownloads.sourceforge.net/swig/swigwin-${TARGET_SWIG_VERSION}.zip
       URL_MD5 a1dc34766cf599f49e2092f7973c85f4
-      SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/swigwin-${TARGET_SWIG_VERSION}
+      SOURCE_DIR ${EXTERNAL_SOURCE_DIRECTORY}/swigwin-${TARGET_SWIG_VERSION}
       ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
       )
 
-    set(SWIG_DIR ${CMAKE_CURRENT_BINARY_DIR}/swigwin-${TARGET_SWIG_VERSION}) # ??
-    set(SWIG_EXECUTABLE ${CMAKE_CURRENT_BINARY_DIR}/swigwin-${TARGET_SWIG_VERSION}/swig.exe)
+    set(SWIG_DIR ${EXTERNAL_BINARY_DIRECTORY}/swigwin-${TARGET_SWIG_VERSION}) # ??
+    set(SWIG_EXECUTABLE ${EXTERNAL_BINARY_DIRECTORY}/swigwin-${TARGET_SWIG_VERSION}/swig.exe)
     set(Swig_DEPEND Swig)
   else()
     # Set dependency list
@@ -62,15 +69,15 @@ if(NOT SWIG_DIR)
     mark_as_advanced(BISON_FLAGS)
 
     # follow the standard EP_PREFIX locations
-    set(swig_binary_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig-prefix/src/Swig-build)
-    set(swig_source_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig-prefix/src/Swig)
-    set(swig_install_dir ${CMAKE_CURRENT_BINARY_DIR}/Swig/install)
+    set(swig_binary_dir ${EXTERNAL_BINARY_DIRECTORY}/Swig-prefix/src/Swig-build)
+    set(swig_source_dir ${EXTERNAL_BINARY_DIRECTORY}/Swig-prefix/src/Swig)
+    set(swig_install_dir ${EXTERNAL_BINARY_DIRECTORY}/Swig/install)
 
     configure_file(
       ${CMAKE_CURRENT_LIST_DIR}/External_Swig_configure_step.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/External_Swig_configure_step.cmake
+      ${EXTERNAL_BINARY_DIRECTORY}/External_Swig_configure_step.cmake
       @ONLY)
-    set ( swig_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/External_Swig_configure_step.cmake )
+    set ( swig_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${EXTERNAL_BINARY_DIRECTORY}/External_Swig_configure_step.cmake )
 
     ExternalProject_Add(${proj}
       URL http://prdownloads.sourceforge.net/swig/swig-${TARGET_SWIG_VERSION}.tar.gz

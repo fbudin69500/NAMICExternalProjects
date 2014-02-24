@@ -4,9 +4,6 @@ include(CMakeDependentOption)
 option(${PRIMARY_PROJECT_NAME}_INSTALL_DEVELOPMENT "Install development support include and libraries for external packages." OFF)
 mark_as_advanced(${PRIMARY_PROJECT_NAME}_INSTALL_DEVELOPMENT)
 
-option(${PRIMARY_PROJECT_NAME}_USE_QT "Find and use Qt with VTK to build GUI Tools" OFF)
-mark_as_advanced(${PRIMARY_PROJECT_NAME}_USE_QT)
-
 set(ITK_VERSION_MAJOR 4 CACHE STRING "Choose the expected ITK major version to build, only version 4 allowed.")
 set_property(CACHE ITK_VERSION_MAJOR PROPERTY STRINGS "4")
 
@@ -22,18 +19,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Build option(s)
 #-----------------------------------------------------------------------------
-option(USE_BRAINSFit                      "Build BRAINSFit"                      ON)
-option(USE_BRAINSSnapShotWriter           "Build BRAINSSnapShotWriter"           ON)
-if( NOT USE_ANTs )
-option(USE_ANTs                           "Build ANTs"                           ON)
-endif()
 
-if(${PRIMARY_PROJECT_NAME}_USE_QT)
-  if(NOT QT4_FOUND)
-    find_package(Qt4 4.6 COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED)
-    include(${QT_USE_FILE})
-  endif()
-endif()
 
 if( USE_BRAINSFit ) ## This is to force configuration of python early.
   ## NIPYPE is not stable under python 2.6, so require 2.7 when using autoworkup

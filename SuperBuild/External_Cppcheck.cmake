@@ -1,3 +1,9 @@
+if( NOT EXTERNAL_SOURCE_DIRECTORY )
+  set( EXTERNAL_SOURCE_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/ExternalSources )
+endif()
+if( NOT EXTERNAL_BINARY_DIRECTORY )
+  set( EXTERNAL_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
+endif()
 # Make sure this file is included only once by creating globally unique varibles
 # based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -56,7 +62,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
-    SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/ExternalSources/${proj}
+    SOURCE_DIR ${EXTERNAL_SOURCE_DIRECTORY}/ExternalSources/${proj}
     BUILD_IN_SOURCE 1
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
@@ -65,11 +71,11 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
     CONFIGURE_COMMAND ""
     BUILD_COMMAND HAVE_RULES=no CC=${CMAKE_C_COMPILER} CXX=$CMAKE_CXX_COMPILER{} ${CMAKE_MAKE_PROGRAM}
-    INSTALL_COMMAND HAVE_RULES=no DESTDIR=${CMAKE_BINARY_DIR}/ PREFIX=Utils ${CMAKE_MAKE_PROGRAM} install
+    INSTALL_COMMAND HAVE_RULES=no DESTDIR=${EXTERNAL_BINARY_DIRECTORY}/ PREFIX=Utils ${CMAKE_MAKE_PROGRAM} install
     DEPENDS
       ${${proj}_DEPENDENCIES}
     )
-  set(${extProjName}_EXE ${CMAKE_BINARY_DIR}/Utils/bin/cppcheck)
+  set(${extProjName}_EXE ${EXTERNAL_BINARY_DIRECTORY}/Utils/bin/cppcheck)
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_program(${proj}_EXE cppcheck DOC "Path of Cppcheck program")
