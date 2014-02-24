@@ -153,6 +153,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DITK_WRAPPING:BOOL=OFF #${BUILD_SHARED_LIBS} ## HACK:  QUICK CHANGE
       -DModule_MGHIO:BOOL=ON  # Allow building of the MGHIO classes
       -DITK_USE_SYSTEM_DCMTK:BOOL=${${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT}
+      -DModule_ITKIOPhilipsREC:BOOL=ON
       ${${proj}_TIFF_ARGS}
       ${${proj}_JPEG_ARGS}
       ${${proj}_ZLIB_ARGS}
