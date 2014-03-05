@@ -133,6 +133,7 @@ set( ListProjects
   niral_utilities
   SPHARM-PDM
   MriWatcher
+  AtlasWerks
 )
 
  foreach( var ${ListProjects})
