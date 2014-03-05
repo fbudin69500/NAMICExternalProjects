@@ -36,15 +36,10 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-if( ${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT )
-  set(${proj}_DEPENDENCIES VTK)
-else()
-  set(${proj}_DEPENDENCIES ITKv4 VTK SlicerExecutionModel BatchMake CLAPACK)
+set(${proj}_DEPENDENCIES ITKv4 VTK SlicerExecutionModel BatchMake CLAPACK)
+if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
+  list(APPEND ${proj}_DEPENDENCIES DCMTK)
 endif()
-#if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-#endif()
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
@@ -60,36 +55,13 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DCMAKE_OSX_SYSROOT=${CMAKE_OSX_SYSROOT}
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
-
-  if( ${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT )
-    set(${proj}_CMAKE_OPTIONS
-    -DUSE_SYSTEM_SlicerExecutionModel:BOOL=OFF
-    -DUSE_SYSTEM_ITK:BOOL=OFF
-    -DITK_VERSION_MAJOR:STRING=${ITK_VERSION_MAJOR}
-    -DCLAPACK_DIR:PATH=${CLAPACK_DIR}
-    -DSPHARM-PDM_SUPERBUILD:BOOL=ON
-    -DUSE_SYSTEM_BatchMake:BOOL=OFF
-    -DUSE_SYSTEM_CLAPACK:BOOL=OFF
-    )
-  else()
     set(${proj}_CMAKE_OPTIONS
     -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
     -DUSE_SYSTEM_ITK:BOOL=ON
-    -DITK_VERSION_MAJOR:STRING=${ITK_VERSION_MAJOR}
-    -DITK_DIR:PATH=${ITK_DIR}
-    -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
-    -DBatchMake_DIR:PATH=${BatchMake_DIR}
-    -DCLAPACK_DIR:PATH=${CLAPACK_DIR}
     -DUSE_SYSTEM_CLAPACK:BOOL=ON
     -DUSE_SYSTEM_BatchMake:BOOL=ON
-    -DSPHARM-PDM_SUPERBUILD:BOOL=OFF
-    )
-  endif()
-
-  ### --- Project specific additions here
-  set(${proj}_CMAKE_OPTIONS
     -DUSE_SYSTEM_VTK:BOOL=ON
-    -DVTK_DIR:PATH=${VTK_DIR}
+    -DSPHARM-PDM_SUPERBUILD:BOOL=OFF
     -DCOMPILE_ImageMath:BOOL=OFF
     )
 
@@ -111,7 +83,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
-#      ${COMMON_EXTERNAL_PROJECT_ARGS}
+      ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
       -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
 ## We really do want to install in order to limit # of include paths INSTALL_COMMAND ""
