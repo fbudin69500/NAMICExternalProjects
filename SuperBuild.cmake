@@ -132,6 +132,7 @@ set( ListProjects
   ResampleDTIlogEuclidean
   niral_utilities
   SPHARM-PDM
+  MriWatcher
 )
 
  foreach( var ${ListProjects})
