@@ -51,7 +51,9 @@ SlicerMacroCheckExternalProjectDependency(${proj})
 
 if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) ) )
   #message(STATUS "${__indent}Adding project ${proj}")
-
+  if( BUILD_TESTING )
+    message(WARNING "BUILD_TESTING is set to ON so BRAINS tools will not be built statically")
+  endif()
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
@@ -85,8 +87,6 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
   # message("BOOST_INCLUDE_DIR:PATH=${BOOST_INCLUDE_DIR}")
   set(${proj}_CMAKE_OPTIONS
       -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
-      -DBUILD_EXAMPLES:BOOL=OFF
-      -DBUILD_TESTING:BOOL=ON
       -DUSE_SYSTEM_ITK:BOOL=ON
       -DUSE_SYSTEM_VTK:BOOL=ON
       -DUSE_SYSTEM_DCMTK:BOOL=ON
