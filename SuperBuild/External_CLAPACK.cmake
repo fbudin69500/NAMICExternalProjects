@@ -63,6 +63,16 @@ string(REPLACE "/W4" "/W0" CMAKE_CXX_FLAGS_CLAPACK "${CMAKE_CXX_FLAGS_CLAPACK}")
 string(REPLACE "/W3" "/W0" CMAKE_C_FLAGS_CLAPACK "${ep_common_c_flags}")
 string(REPLACE "/W4" "/W0" CMAKE_C_FLAGS_CLAPACK "${CMAKE_C_FLAGS_CLAPACK}")
 
+#The libraries compiled in this package should stay in the directory in which
+#they are compiled and expected to be found.
+#We remove CMake variables that could change the output folder of those libraries
+#If we don't, packages that need those libraries will not find them
+#We generate COMMON_EXTERNAL_PROJECT_ARGS without those CMake variables
+set(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS_SAVE ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS} )
+list( REMOVE_ITEM ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS CMAKE_ARCHIVE_OUTPUT_DIRECTORY:PATH CMAKE_LIBRARY_OUTPUT_DIRECTORY:PATH BUILD_EXAMPLES:BOOL BUILD_TESTING:BOOL CMAKE_RUNTIME_OUTPUT_DIRECTORY:PATH)
+_expand_external_project_vars()
+set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
+
 #
 # To fix compilation problem: relocation R_X86_64_32 against `a local symbol' can not be
 # used when making a shared object; recompile with -fPIC
@@ -103,6 +113,9 @@ else()
   SlicerMacroEmptyExternalProject(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
+#We set COMMON_EXTERNAL_PROJECT_ARGS back to its original value
+#as well as add the path to the package we just compiled
+set(${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS_SAVE} )
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
 _expand_external_project_vars()
 set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
