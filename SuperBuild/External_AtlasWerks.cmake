@@ -61,6 +61,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     -DVTK_DIR:PATH=${VTK_DIR}
     -DLAPACK_DIR:PATH=${CLAPACK_DIR}
     -DFFTW_INCLUDE_PATH:PATH=${FFTW_DIR}/include # will be used to set FFTW_INSTALL_BASE_PATH by finding the path = remove the /include
+    -DCMAKE_LIBRARY_PATH:PATH=${FFTW_DIR}/lib
     -DAtlasWerks_COMPILE_TESTING:BOOL=OFF
     -DatlasWerks_COMPILE_APP_Affine:BOOL=OFF
     -DatlasWerks_COMPILE_APP_AffineAtlas:BOOL=OFF
