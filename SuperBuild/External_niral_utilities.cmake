@@ -71,6 +71,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     -DCOMPILE_POLYDATATRANSFORM:BOOL=OFF
     -DCOMPILE_TRANSFORMDEFORMATIONFIELD:BOOL=OFF
     -DCOMPILE_TEXTUREBIOMARKERTOOL:BOOL=OFF
+    -DCOMPILE_DMDBIOMARKERTOOL:BOOL=OFF
     -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
     -DUSE_SYSTEM_ITK:BOOL=ON
     -DUSE_SYSTEM_VTK:BOOL=ON
@@ -82,7 +83,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "https://www.nitrc.org/svn/niral_utilities/trunk")
-  set(${proj}_SVN_REVISION -r "58")
+  set(${proj}_SVN_REVISION -r "66")
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${${proj}_REPOSITORY}
     SVN_REVISION ${${proj}_SVN_REVISION}
