@@ -66,8 +66,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     )
 
   ### --- End Project specific additions
-  set( ${proj}_REPOSITORY ${git_protocol}://github.com/fbudin69500/ResampleDTIlogEuclidean.git )
-  set( ${proj}_GIT_TAG f23e1a93825e2a98ea7c64b8cd4edc0cd2187eb9 )
+  set( ${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/ResampleDTIlogEuclidean.git )
+  set( ${proj}_GIT_TAG 09a0676bc4befa3a1b9c2384fedf37b21e193797 )
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
