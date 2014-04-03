@@ -109,6 +109,7 @@ set( ListProjectsDICOM
 
 set( ListProjects
   BRAINSTools
+  ABC
   DTIPrep
   ShapePopulationViewer
   FiberViewerLight
