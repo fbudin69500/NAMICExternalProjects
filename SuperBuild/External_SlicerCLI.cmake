@@ -157,6 +157,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     PATCH_COMMAND ${CMAKE_COMMAND} -DSlicer_Revision:STRING=${Slicer_Revision} -DStringModules:STRING="${StringModules}" -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE} -DDOWNLOAD_DIR:PATH=${EXTERNAL_SOURCE_DIRECTORY}/${proj} -P ${EXTERNAL_SOURCE_DIRECTORY}/${proj}/SuperBuild/SlicerExecutionModelDownload.cmake
     DEPENDS
       ${${proj}_DEPENDENCIES}
+    INSTALL_COMMAND ""
   )
   set(${extProjName}_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build)
 else()
