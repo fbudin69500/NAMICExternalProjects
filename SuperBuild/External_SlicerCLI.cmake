@@ -126,12 +126,13 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     -DVTK_DIR:PATH=${VTK_DIR}
     -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
     ${SLICER_CLI_TO_BUILD}
-    -Dcli-modules_SUPERBUILD:BOOL=OFF
+    -Dcli-modules_SUPERBUILD:BOOL=ON
+    -DSlicer_Revision:STRING=22599#Builds Slicer extension at SVN revision 22599 (=Slicer 4.3.1)
     )
 
   ### --- End Project specific additions
   set( ${proj}_REPOSITORY ${git_protocol}://github.com/fbudin69500/SlicerCLI.git )
-  set( ${proj}_GIT_TAG 739793d164836c6fce3c4df4ff2a3e8d72574356 )
+  set( ${proj}_GIT_TAG 1d432c3dacc02de83c98bce1adbe350bb66a38a3 )
   if( NOT DEFINED Slicer_Revision )
     set( Slicer_Revision 0 ) 
   endif()
@@ -150,7 +151,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
-      -D${LOCAL_PROJECT_NAME}_SUPERBUILD:BOOL=OFF
       ## We really do want to install to remove uncertainty about where the tools are
       ## (on Windows, tools might be in subfolders, like "Release", "Debug",...)
       -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
