@@ -38,15 +38,13 @@ set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, th
 #  message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 #endif()
 
-# Set dependency list
-set(${proj}_DEPENDENCIES ITKv4)
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
-
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
+  # Set dependency list
+  set(${proj}_DEPENDENCIES ITKv4)
 
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
@@ -56,33 +54,19 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET})
   endif()
 
-  ### --- Project specific additions here
-  set(${proj}_DCMTK_ARGS)
-  if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-    set(${proj}_DCMTK_ARGS
-      -DDCMTK_DIR:PATH=${DCMTK_DIR}
-      )
-  endif()
-
   set(${proj}_CMAKE_OPTIONS
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
-      -DITK_DIR:PATH=${ITK_DIR}
       -DSlicerExecutionModel_DEFAULT_CLI_RUNTIME_OUTPUT_DIRECTORY:PATH=${${PROJECT_NAME}_CLI_RUNTIME_OUTPUT_DIRECTORY}
       -DSlicerExecutionModel_DEFAULT_CLI_LIBRARY_OUTPUT_DIRECTORY:PATH=${${PROJECT_NAME}_CLI_LIBRARY_OUTPUT_DIRECTORY}
       -DSlicerExecutionModel_DEFAULT_CLI_ARCHIVE_OUTPUT_DIRECTORY:PATH=${${PROJECT_NAME}_CLI_ARCHIVE_OUTPUT_DIRECTORY}
       -DSlicerExecutionModel_DEFAULT_CLI_INSTALL_RUNTIME_DESTINATION:STRING=${${PROJECT_NAME}_CLI_INSTALL_RUNTIME_DESTINATION}
       -DSlicerExecutionModel_DEFAULT_CLI_INSTALL_LIBRARY_DESTINATION:STRING=${${PROJECT_NAME}_CLI_INSTALL_LIBRARY_DESTINATION}
       -DSlicerExecutionModel_DEFAULT_CLI_INSTALL_ARCHIVE_DESTINATION:STRING=${${PROJECT_NAME}_CLI_INSTALL_ARCHIVE_DESTINATION}
-      #-DSlicerExecutionModel_LIBRARY_PROPERTIES:STRING=${Slicer_LIBRARY_PROPERTIES}
-      #-DSlicerExecutionModel_INSTALL_BIN_DIR:PATH=bin
-      #-DSlicerExecutionModel_INSTALL_LIB_DIR:PATH=lib
-      #-DSlicerExecutionModel_INSTALL_SHARE_DIR:PATH=${Slicer_INSTALL_ROOT}share/${SlicerExecutionModel}
-      #-DSlicerExecutionModel_INSTALL_NO_DEVELOPMENT:BOOL=${Slicer_INSTALL_NO_DEVELOPMENT}
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/Slicer/SlicerExecutionModel.git")
-  set(${proj}_GIT_TAG "ca00f71c44322b7153d66170f7221cd143ef1cc7")
+  set(${proj}_GIT_TAG "82ee76252f19dd5bdf22cc42a7da7b80f009f359")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -98,7 +82,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
       ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
-      ${${proj}_DCMTK_ARGS}
     INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
@@ -115,7 +98,9 @@ else()
   SlicerMacroEmptyExternalProject(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
+list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH GenerateCLP_DIR:PATH)
+_expand_external_project_vars()
+set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 
 ProjectDependancyPop(CACHED_extProjName extProjName)
 ProjectDependancyPop(CACHED_proj proj)

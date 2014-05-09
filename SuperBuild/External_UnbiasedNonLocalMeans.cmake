@@ -13,11 +13,28 @@ if(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED)
 endif()
 set(${CMAKE_CURRENT_LIST_FILENAME}_FILE_INCLUDED 1)
 
+
+## External_${extProjName}.cmake files can be recurisvely included,
+## and cmake variables are global, so when including sub projects it
+## is important make the extProjName and proj variables
+## appear to stay constant in one of these files.
+## Store global variables before overwriting (then restore at end of this file.)
+ProjectDependancyPush(CACHED_extProjName ${extProjName})
+ProjectDependancyPush(CACHED_proj ${proj})
+
+# Sanity checks
+if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
+  message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
+endif()
+
 set(proj UnbiasedNonLocalMeans)
-set(${proj}_GIT_REPOSITORY "git://github.com/BRAINSia/UnbiasedNonLocalMeans.git")
-set(${proj}_GIT_TAG "master")
 
 set(${proj}_DEPENDENCIES ITKv4 SlicerExecutionModel )
+
+SlicerMacroCheckExternalProjectDependency(${proj})
+
+set(${proj}_GIT_REPOSITORY "git://github.com/BRAINSia/UnbiasedNonLocalMeans.git")
+set(${proj}_GIT_TAG "master")
 
 ExternalProject_Add(${proj}
   GIT_REPOSITORY ${${proj}_GIT_REPOSITORY}
@@ -36,13 +53,10 @@ ExternalProject_Add(${proj}
   ${CMAKE_OSX_EXTERNAL_PROJECT_ARGS}
   -DUSE_SYSTEM_ITK:BOOL=ON
   -DUSE_SYSTEM_SLICER_EXECUTION_MODEL:BOOL=ON
-  -DITK_DIR:PATH=${ITK_DIR}
   ${COMMON_EXTERNAL_PROJECT_ARGS}
   -DBUILD_EXAMPLES:BOOL=OFF
   -DBUILD_TESTING:BOOL=OFF
   -DUnbiasedNonLocalMeans_SUPERBUILD:BOOL=OFF
-  -DTeem_DIR:PATH=${Teem_DIR}
-  -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
   -DSlicer_SOURCE_DIR:BOOL=ON ## THIS is a hack to prevent looking for slicer
   -DUnbiasedNonLocalMeansTractography_SuperBuild:BOOL=ON ## THIS should be the single flag
   ${${proj}_CMAKE_OPTIONS}
@@ -57,3 +71,8 @@ ExternalProject_Add(${proj}
 #    DEPENDERS build
 #    ALWAYS 1
 #  )
+
+list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
+
+ProjectDependancyPop(CACHED_extProjName extProjName)
+ProjectDependancyPop(CACHED_proj proj)

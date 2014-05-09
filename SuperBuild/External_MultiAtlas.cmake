@@ -37,18 +37,14 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set(${proj}_DEPENDENCIES SlicerExecutionModel ITKv4)
-#if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-#endif()
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
 
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
+  # Set dependency list
+  set(${proj}_DEPENDENCIES SlicerExecutionModel ITKv4)
 
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
@@ -63,10 +59,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
       -DUSE_SYSTEM_ITK:BOOL=ON
       -DUSE_SYSTEM_SLICER_EXECUTION_MODEL:BOOL=ON
-      -DITK_DIR:PATH=${ITK_DIR}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
-      -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
       -DSlicer_SOURCE_DIR:BOOL=ON ## THIS is a hack to prevent looking for slicer
     )
 

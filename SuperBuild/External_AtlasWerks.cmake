@@ -37,14 +37,13 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set(${proj}_DEPENDENCIES ITKv4 VTK CLAPACK FFTW )
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
-
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
+  # Set dependency list
+  set(${proj}_DEPENDENCIES ITKv4 VTK CLAPACK FFTW )
+
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
 
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -57,11 +56,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- Project specific additions here
   set(${proj}_CMAKE_OPTIONS
-    -DITK_DIR:PATH=${ITK_DIR}
-    -DVTK_DIR:PATH=${VTK_DIR}
-    -DLAPACK_DIR:PATH=${CLAPACK_DIR}
-    -DFFTW_INCLUDE_PATH:PATH=${FFTW_DIR}/include # will be used to set FFTW_INSTALL_BASE_PATH by finding the path = remove the /include
     -DCMAKE_LIBRARY_PATH:PATH=${FFTW_DIR}/lib
+    -DLAPACK_DIR:PATH=${CLAPACK_DIR}
     -DAtlasWerks_COMPILE_TESTING:BOOL=OFF
     -DatlasWerks_COMPILE_APP_Affine:BOOL=OFF
     -DatlasWerks_COMPILE_APP_AffineAtlas:BOOL=OFF

@@ -37,18 +37,13 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set( ${PRIMARY_PROJECT_NAME}_USE_QT TRUE )
-set(${proj}_DEPENDENCIES ITKv4 Qt4 SlicerExecutionModel VTK )
-#if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-#endif()
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
-
-
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
+  # Set dependency list
+  set( ${PRIMARY_PROJECT_NAME}_USE_QT TRUE )
+  set(${proj}_DEPENDENCIES ITKv4 Qt4 SlicerExecutionModel VTK )
+
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
   #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
@@ -62,17 +57,12 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   ### --- Project specific additions here
   set(${proj}_CMAKE_OPTIONS
     -DInnerBuildCMakeLists:BOOL=ON
-    -DITK_DIR:PATH=${ITK_DIR}
-    -DVTK_DIR:PATH=${VTK_DIR}
-    -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
-    -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
-    -DGenerateCLP_DIR:PATH=${GenerateCLP_DIR}
     -DINSTALL_DIR:STRING=bin
     )
 
   ### --- End Project specific additions
   set( ${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/DTIAtlasBuilder.git )
-  set( ${proj}_GIT_TAG 3c44cf904758bce17c93a18f077d271bd8671c40 )
+  set( ${proj}_GIT_TAG fe47ddefe0ee6ca7817a10682c75dd567617aeef )
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

@@ -37,16 +37,12 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set(${proj}_DEPENDENCIES ITKv4 BatchMake SlicerExecutionModel )
-#if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-#endif()
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
-
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
+  # Set dependency list
+  set(${proj}_DEPENDENCIES ITKv4 BatchMake SlicerExecutionModel )
+
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
   #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
@@ -64,12 +60,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     -DUSE_SYSTEM_ITK:BOOL=ON
     -DUSE_SYSTEM_VTK:BOOL=ON
     -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
-    -DBatchMake_DIR:PATH=${BatchMake_DIR}
-    -DITK_DIR:PATH=${ITK_DIR}
-    -DVTK_DIR:PATH=${VTK_DIR}
     -DCOMPILE_EXTERNAL_dtiprocess:BOOL=OFF
     -DDTIReg_SUPERBUILD:BOOL=OFF
-    -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
     -DDTIReg_ADDITIONAL_LINK_DIRS:PATH=${CMAKE_CURRENT_BINARY_DIR}/lib
     -DUSE_GIT_PROTOCOL_DTIReg:STRING=${USE_GIT_PROTOCOL}
     -DBUILD_SHARED_LIBS:BOOL=OFF
@@ -77,7 +69,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY https://www.nitrc.org/svn/dtireg/trunk)
-  set(${proj}_REVISION -r "66")
+  set(${proj}_REVISION -r "70")
 
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${${proj}_REPOSITORY}

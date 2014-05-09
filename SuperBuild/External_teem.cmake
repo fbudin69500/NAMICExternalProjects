@@ -37,18 +37,14 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set(${proj}_DEPENDENCIES "")
-#if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-#endif()
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
 
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
+  # Set dependency list
+  set(${proj}_DEPENDENCIES zlib)
 
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
@@ -79,7 +75,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/teem.git")
-  set(${proj}_TAG "9db65f15e554119989bb49d12b404e7e44f150e4")
+  set(${proj}_TAG "bcf5abb8edf862566aabd6b0fb8f8f78155c8d8f")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -101,7 +97,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   )
   ExternalProject_Add_Step(${proj} fix_AIR_EXISTS
     COMMAND ${CMAKE_COMMAND} -DAIR_FILE=${EXTERNAL_SOURCE_DIRECTORY}/teem/src/air/air.h
-    -P ${CMAKE_CURRENT_LIST_DIR}/TeemPatch.cmake
+    -P ${CMAKE_CURRENT_LIST_DIR}/External_teem_patch.cmake
     COMMAND ${CMAKE_COMMAND} -E make_directory ${EXTERNAL_SOURCE_DIRECTORY}/teem/include/teem
     COMMAND ${CMAKE_COMMAND} -E copy ${EXTERNAL_SOURCE_DIRECTORY}/teem/src/bane/bane.h
     ${EXTERNAL_SOURCE_DIRECTORY}/teem/include/teem/bane.h
@@ -120,6 +116,8 @@ else()
 endif()
 
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
+_expand_external_project_vars()
+set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 
 ProjectDependancyPop(CACHED_extProjName extProjName)
 ProjectDependancyPop(CACHED_proj proj)

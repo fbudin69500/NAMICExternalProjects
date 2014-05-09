@@ -37,16 +37,12 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set(${proj}_DEPENDENCIES ITKv4)
-#if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-#endif()
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
-
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
+  # Set dependency list
+  set(${proj}_DEPENDENCIES ITKv4)
+
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
   #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
@@ -66,7 +62,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://batchmake.org/BatchMake.git)
-  set(${proj}_GIT_TAG "8addbdb62f0135ba01ffe12ddfc32121b6d66ef5")
+  set(${proj}_GIT_TAG "7da88ae6027eb4eac363c09834a6e014306f3038")
 
   #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
@@ -90,7 +86,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DUSE_SPLASHSCREEN:BOOL=OFF
       ${BatchMakeCURLCmakeArg}
     DEPENDS ${${proj}_DEPENDENCIES}
-    PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/BatchMakePatchedZip.c ${EXTERNAL_SOURCE_DIRECTORY}/BatchMake/Utilities/Zip/zip.c
+    PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/External_BatchMake_patch-Zip.c ${EXTERNAL_SOURCE_DIRECTORY}/BatchMake/Utilities/Zip/zip.c
     )
 
   set(${extProjName}_DIR  ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install/lib/BatchMake)

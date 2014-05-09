@@ -37,14 +37,18 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set(${proj}_DEPENDENCIES ITKv4 PCRE Swig)
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
-
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}") )
   #message(STATUS "${__indent}Adding project ${proj}")
+  # Set dependency list
+  set(${proj}_DEPENDENCIES ITKv4 PCRE Swig python)
+
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
+  set( COMMON_EXTERNAL_PROJECT_ARGS_COPY ${COMMON_EXTERNAL_PROJECT_ARGS} )
+  if( slicer_PYTHON_REAL_EXECUTABLE )
+    list(REMOVE_ITEM COMMON_EXTERNAL_PROJECT_ARGS -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE})
+    list(APPEND COMMON_EXTERNAL_PROJECT_ARGS -DPYTHON_EXECUTABLE:FILEPATH=${slicer_PYTHON_REAL_EXECUTABLE})
+  endif()
 
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -60,19 +64,21 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}")
   find_package( PythonInterp REQUIRED )
   find_package ( PythonLibs REQUIRED )
 
+
+#We cannot look for Python.h if we build python with Superbuild at the same time as we build SimpleITK
   #
   # On the Helium machine I ran into trouble with
   # SimpleITK not being able to find Python.h.
   # After sleuthing around I determined that
-  # PYTHON_INCLUDE_DIRS pointed to the parent of the
+  # PYTHON_INCLUDE_DIR pointed to the parent of the
   # directory containing Python.h, So if that's
   # the case I search for it and amend the patch.
-  if(NOT EXISTS "${PYTHON_INCLUDE_DIRS}/Python.h")
-    file(GLOB_RECURSE PYTHON_H "${PYTHON_INCLUDE_DIRS}/Python.h")
-    get_filename_component(PYTHON_INCLUDE_DIRS ${PYTHON_H} PATH )
-    set(PYTHON_INCLUDE_PATH ${PYTHON_INCLUDE_DIRS})
-  #  message("PYTHON_INCLUDE_DIRS=${PYTHON_INCLUDE_DIRS}")
-  endif()
+#  if(NOT EXISTS "${PYTHON_INCLUDE_DIR}/Python.h")
+#    file(GLOB_RECURSE PYTHON_H "${PYTHON_INCLUDE_DIR}/Python.h")
+#    get_filename_component(PYTHON_INCLUDE_DIR ${PYTHON_H} PATH )
+#    set(PYTHON_INCLUDE_PATH ${PYTHON_INCLUDE_DIR})
+  #  message("PYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR}")
+#  endif()
   configure_file(SuperBuild/External_SimpleITK_install_step.cmake.in
     ${EXTERNAL_BINARY_DIRECTORY}/External_SimpleITK_install_step.cmake
     @ONLY)
@@ -88,12 +94,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}")
     # SimpleITK does not work with shared libs turned on
     -DBUILD_SHARED_LIBS:BOOL=OFF
     -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}
-    -DITK_DIR:PATH=${ITK_DIR}
     -DBUILD_TESTING:BOOL=OFF
     -DBUILD_DOXYGEN:BOOL=OFF
-    -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
-    -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
-    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIRS}
     -DSITK_INT64_PIXELIDS:BOOL=OFF
     -DWRAP_PYTHON:BOOL=ON
     -DWRAP_TCL:BOOL=OFF
@@ -102,12 +104,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}")
     -DWRAP_LUA:BOOL=OFF
     -DWRAP_CSHARP:BOOL=OFF
     -DWRAP_R:BOOL=OFF
-    -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
-    -DPYTHON_LIBRARY:STRING=${PYTHON_LIBRARY}
-    -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIRS}
-    -DPYTHON_DEBUG_LIBRARIES:STRING=${PYTHON_DEBUG_LIBRARIES}
-    -DSWIG_EXECUTABLE:PATH=${SWIG_EXECUTABLE}
-    #
   )
 
   ### --- End Project specific additions
@@ -133,6 +129,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}")
       ${${proj}_DEPENDENCIES}
   )
   set(${extProjName}_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build)
+  set( COMMON_EXTERNAL_PROJECT_ARGS ${COMMON_EXTERNAL_PROJECT_ARGS_COPY} )
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} REQUIRED)

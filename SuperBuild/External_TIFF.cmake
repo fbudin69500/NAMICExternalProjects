@@ -38,15 +38,32 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set(${proj}_DEPENDENCIES JPEG)
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
-
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
-  #message(STATUS "${__indent}Adding project ${proj}")
+  # Set dependency list
+  set(${proj}_DEPENDENCIES "")
 
+  #message(STATUS "${__indent}Adding project ${proj}")
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_ZLIB_SUPPORT )
+    list(APPEND ${proj}_DEPENDENCIES zlib)
+  endif()
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_JPEG_SUPPORT )
+    list(APPEND ${proj}_DEPENDENCIES JPEG)
+  endif()
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
+
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_ZLIB_SUPPORT )
+    set(${proj}_ZLIB_ARGS 
+        --with-zlib-include-dir=${ZLIB_INCLUDE_DIR}
+        --with-zlib-lib-dir=${zlib_DIR}/lib
+      )
+  endif()
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_JPEG_SUPPORT )
+    set(${proj}_JPEG_ARGS
+        --with-jpeg-lib-dir=${JPEG_LIB_DIR}
+        --with-jpeg-include-dir=${JPEG_INCLUDE_DIR}
+      )
+  endif()
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
@@ -82,8 +99,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     --enable-shared=No
     --enable-static=Yes
     --disable-lzma
-    --with-jpeg-lib-dir=${JPEG_LIB_DIR}
-    --with-jpeg-include-dir=${JPEG_INCLUDE_DIR}
+    ${${proj}_ZLIB_ARGS}
+    ${${proj}_JPEG_ARGS}
     CC=${CMAKE_C_COMPILER}
     CXX=${CMAKE_CXX_COMPILER}
     "CFLAGS=${${proj}_CFLAGS}"

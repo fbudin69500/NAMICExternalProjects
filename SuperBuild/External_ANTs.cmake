@@ -41,16 +41,12 @@ if(DEFINED ${extProjName}_LIBRARY_DIR AND NOT EXISTS ${${extProjName}_LIBRARY_DI
   message(FATAL_ERROR "${extProjName}_LIBRARY_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_LIBRARY_DIR})")
 endif()
 
-# Set dependency list
-set(${proj}_DEPENDENCIES ITKv4 SlicerExecutionModel )
-if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-endif()
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
-
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
+  # Set dependency list
+  set(${proj}_DEPENDENCIES ITKv4 SlicerExecutionModel )
+
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
   #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
@@ -67,8 +63,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
       -DUSE_SYSTEM_ITK:BOOL=ON
       -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
-      -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
-      -DITK_DIR:PATH=${ITK_DIR}
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
       -DANTS_SUPERBUILD:BOOL=OFF
@@ -121,6 +115,8 @@ ${extProjName}_LIBRARY_DIR=${${extProjName}_LIBRARY_DIR}")
 endif()
 
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
+_expand_external_project_vars()
+set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 
 ProjectDependancyPop(CACHED_extProjName extProjName)
 ProjectDependancyPop(CACHED_proj proj)

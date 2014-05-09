@@ -46,9 +46,6 @@ endif()
 
 # Set dependency list
 set(${proj}_DEPENDENCIES ITKv4 VTK SlicerExecutionModel )
-#if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-#endif()
 
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
@@ -121,17 +118,13 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     -DUSE_SYSTEM_ITK:BOOL=ON
     -DUSE_SYSTEM_VTK:BOOL=ON
     -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
-    -DITK_DIR:PATH=${ITK_DIR}
-    -DDCMTK_DIR:PATH=${DCMTK_DIR}
-    -DVTK_DIR:PATH=${VTK_DIR}
-    -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
     ${SLICER_CLI_TO_BUILD}
     -Dcli-modules_SUPERBUILD:BOOL=OFF
     )
 
   ### --- End Project specific additions
   set( ${proj}_REPOSITORY ${git_protocol}://github.com/fbudin69500/SlicerCLI.git )
-  set( ${proj}_GIT_TAG 739793d164836c6fce3c4df4ff2a3e8d72574356 )
+  set( ${proj}_GIT_TAG 1d432c3dacc02de83c98bce1adbe350bb66a38a3 )
   if( NOT DEFINED Slicer_Revision )
     set( Slicer_Revision 0 ) 
   endif()
@@ -157,6 +150,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     PATCH_COMMAND ${CMAKE_COMMAND} -DSlicer_Revision:STRING=${Slicer_Revision} -DStringModules:STRING="${StringModules}" -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE} -DDOWNLOAD_DIR:PATH=${EXTERNAL_SOURCE_DIRECTORY}/${proj} -P ${EXTERNAL_SOURCE_DIRECTORY}/${proj}/SuperBuild/SlicerExecutionModelDownload.cmake
     DEPENDS
       ${${proj}_DEPENDENCIES}
+    INSTALL_COMMAND ""
   )
   set(${extProjName}_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build)
 else()
