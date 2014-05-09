@@ -180,6 +180,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     set(${proj}_REPOSITORY ${git_protocol}://github.com/BRAINSia/VTK.git)
     set(${proj}_GIT_TAG "FixClangFailure_VTK5.10_release")
   endif()
+
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
