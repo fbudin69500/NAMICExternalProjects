@@ -9,8 +9,6 @@ set(CMAKE_MODULE_PATH
   ${${PROJECT_NAME}_BINARY_DIR}/CMake
   ${CMAKE_MODULE_PATH}
   )
-message("ITK_DIR: "${ITK_DIR})
-message("SlicerExecutionModel_DIR: "${SlicerExecutionModel_DIR})
 #-----------------------------------------------------------------------------
 find_package(ITK REQUIRED)
 if(Slicer_BUILD_${PROJECT_NAME})
