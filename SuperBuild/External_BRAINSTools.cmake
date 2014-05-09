@@ -37,23 +37,24 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set( ${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT ON )
-set( ${PRIMARY_PROJECT_NAME}_USE_QT TRUE )
-set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel VTK DCMTK JPEG TIFF Boost teem ReferenceAtlas OpenCV Qt4 )
-
-if(USE_ANTs)
-  list(APPEND ${extProjName}_DEPENDENCIES ANTs)
-endif()
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
-
 if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) ) )
+# Set dependency list
+  set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel VTK DCMTK teem OpenCV zlib )
+
   #message(STATUS "${__indent}Adding project ${proj}")
-  if( BUILD_TESTING )
-    message(WARNING "BUILD_TESTING is set to ON so BRAINS tools will not be built statically")
+  if(USE_ANTs)
+    list(APPEND ${extProjName}_DEPENDENCIES ANTs Boost)
   endif()
+
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_TIFF_SUPPORT )
+    list(APPEND ${proj}_DEPENDENCIES TIFF)
+  endif()
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_JPEG_SUPPORT )
+    list(APPEND ${proj}_DEPENDENCIES JPEG)
+  endif()
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
+
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
@@ -65,7 +66,6 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
 
   set(BRAINS_ANTS_PARAMS
     -DUSE_ANTS:BOOL=${USE_ANTs}
-    -DUSE_ANTs:BOOL=${USE_ANTs}
     )
   if(USE_ANTs)
     list(APPEND BRAINS_ANTS_PARAMS
@@ -85,82 +85,82 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
   # message("ITK_DIR: ${ITK_DIR}")
   # message("SlicerExecutionModel_DIR: ${SlicerExecutionModel_DIR}")
   # message("BOOST_INCLUDE_DIR:PATH=${BOOST_INCLUDE_DIR}")
+
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_TIFF_SUPPORT )
+    set(${proj}_TIFF_ARGS
+      -DUSE_SYSTEM_TIFF:BOOL=ON
+       )
+  endif()
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_JPEG_SUPPORT )
+    set(${proj}_JPEG_ARGS
+      -DUSE_SYSTEM_JPEG:BOOL=ON
+      )
+  endif()
+
   set(${proj}_CMAKE_OPTIONS
-      -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
+      -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/${proj}-install
+      -DBUILD_EXAMPLES:BOOL=OFF
+      -DBUILD_TESTING:BOOL=OFF
       -DUSE_SYSTEM_ITK:BOOL=ON
       -DUSE_SYSTEM_VTK:BOOL=ON
       -DUSE_SYSTEM_DCMTK:BOOL=ON
       -DUSE_SYSTEM_Teem:BOOL=ON
-      -DUSE_SYSTEM_TIFF:BOOL=ON
-      -DUSE_SYSTEM_JPEG:BOOL=ON
       -DUSE_SYSTEM_OpenCV:BOOL=ON
-      -DOpenCV_DIR:PATH=${OpenCV_DIR}
       -DUSE_SYSTEM_ReferenceAtlas:BOOL=ON
-      -DReferenceAtlas_DIR:STRING=${ReferenceAtlas_DIR}
-      -DATLAS_NAME:STRING=${ATLAS_NAME}
-      -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
       -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
       -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
-      -DDCMTK_DIR:PATH=${DCMTK_DIR}
       -DDCMTK_config_INCLUDE_DIR:PATH=${DCMTK_DIR}/include
-      -DJPEG_DIR:PATH=${JPEG_DIR}
-      -DJPEG_INCLUDE_DIR:PATH=${JPEG_INCLUDE_DIR}
-      -DJPEG_LIB_DIR:PATH=${JPEG_LIB_DIR}
-      -DJPEG_LIBRARY:PATH=${JPEG_LIBRARY}
-      -DJPEG_DIR:PATH=${JPEG_DIR}
-      -DJPEG_INCLUDE_DIR:PATH=${JPEG_INCLUDE_DIR}
-      -DJPEG_LIBRARY:PATH=${JPEG_LIBRARY}
-      -DTIFF_DIR:PATH=${TIFF_DIR}
-      -DTIFF_LIBRARY:FILEPATH=${TIFF_LIBRARY}
-      -DTIFF_INCLUDE_DIR:PATH=${TIFF_INCLUDE_DIR}
       -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
       -DSuperBuild_BRAINSTools_USE_GIT_PROTOCOL=${${CMAKE_PROJECT_NAME}_USE_GIT_PROTOCOL}
       -DBRAINSTools_SUPERBUILD:BOOL=OFF
-      -DITK_DIR:PATH=${ITK_DIR}
-      -DVTK_DIR:PATH=${VTK_DIR}
-      -DTeem_DIR:PATH=${Teem_DIR}
       -D${proj}_USE_QT:BOOL=${LOCAL_PROJECT_NAME}_USE_QT
       -DUSE_SYSTEM_ZLIB:BOOL=ON
-      -Dzlib_DIR:PATH=${zlib_DIR}
       -DZLIB_ROOT:PATH=${zlib_DIR}
       -DZLIB_INCLUDE_DIR:PATH=${zlib}_DIR}/include
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
-      -DUSE_BRAINSABC:BOOL=ON
-      -DUSE_BRAINSConstellationDetector:BOOL=ON
-      -DUSE_BRAINSContinuousClass:BOOL=ON
-      -DUSE_BRAINSCut:BOOL=ON
-      -DUSE_BRAINSDemonWarp:BOOL=ON
-      -DUSE_BRAINSFit:BOOL=ON
-      -DUSE_BRAINSImageConvert:BOOL=ON
-      -DUSE_BRAINSInitializedControlPoints:BOOL=ON
-      -DUSE_BRAINSLandmarkInitializer:BOOL=ON
-      -DUSE_BRAINSMultiModeSegment:BOOL=ON
-      -DUSE_BRAINSMush:BOOL=ON
-      -DUSE_BRAINSROIAuto:BOOL=ON
-      -DUSE_BRAINSResample:BOOL=ON
-      -DUSE_BRAINSSnapShotWriter:BOOL=ON
-      -DUSE_BRAINSSurfaceTools:BOOL=ON
-      -DUSE_BRAINSTransformConvert:BOOL=ON
-      -DUSE_BRAINSPosteriorToContinuousClass:BOOL=ON
-      -DUSE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=ON
+      -DUSE_BRAINSABC:BOOL=OFF
+      -DUSE_BRAINSConstellationDetector:BOOL=OFF
+      -DUSE_BRAINSContinuousClass:BOOL=OFF
+      -DUSE_BRAINSCut:BOOL=OFF
+      -DUSE_BRAINSDemonWarp:BOOL=OFF
+      -DUSE_BRAINSFit:BOOL=OFF
+      -DUSE_BRAINSFitEZ:BOOL=OFF
+      -DUSE_BRAINSTalairach:BOOL=OFF
+      -DUSE_BRAINSImageConvert:BOOL=OFF
+      -DUSE_BRAINSInitializedControlPoints:BOOL=OFF
+      -DUSE_BRAINSLandmarkInitializer:BOOL=OFF
+      -DUSE_BRAINSMultiModeSegment:BOOL=OFF
+      -DUSE_BRAINSMush:BOOL=OFF
+      -DUSE_BRAINSImageConvert:BOOL=OFF
+      -DUSE_BRAINSInitializedControlPoints:BOOL=OFF
+      -DUSE_BRAINSLandmarkInitializer:BOOL=OFF
+      -DUSE_BRAINSMultiModeSegment:BOOL=OFF
+      -DUSE_BRAINSMush:BOOL=OFF
+      -DUSE_BRAINSROIAuto:BOOL=OFF
+      -DUSE_BRAINSResample:BOOL=OFF
+      -DUSE_BRAINSSnapShotWriter:BOOL=OFF
+      -DUSE_BRAINSSurfaceTools:BOOL=OFF
+      -DUSE_BRAINSTransformConvert:BOOL=OFF
+      -DUSE_BRAINSPosteriorToContinuousClass:BOOL=OFF
+      -DUSE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=OFF
       -DUSE_DebugImageViewer:BOOL=OFF
-      -DUSE_GTRACT:BOOL=ON
+      -DUSE_GTRACT:BOOL=OFF
       -DUSE_ICCDEF:BOOL=OFF
-      -DUSE_ConvertBetweenFileFormats:BOOL=ON
-      -DUSE_ImageCalculator:BOOL=ON
+      -DUSE_ConvertBetweenFileFormats:BOOL=OFF
+      -DUSE_ImageCalculator:BOOL=OFF
       -DUSE_AutoWorkup:BOOL=OFF
       ${BRAINS_ANTS_PARAMS}
     )
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git")
-  set(${proj}_GIT_TAG "840d9d785d8542f095057e323c238dddeb8544c6")
+  set(${proj}_GIT_TAG "33b739e7e6a414be41d44aca028b1304a2c0a440")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${EXTERNAL_SOURCE_DIRECTORY}/${proj}
-    BINARY_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build
+    BINARY_DIR ${proj}-build
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
     LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
     LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
@@ -191,6 +191,8 @@ else()
 endif()
 
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
+_expand_external_project_vars()
+set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 
 ProjectDependancyPop(CACHED_extProjName extProjName)
 ProjectDependancyPop(CACHED_proj proj)

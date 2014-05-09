@@ -33,10 +33,11 @@ set(proj        ${extProjName} ) #This local name
 
 
 # Set dependency list
-set(${proj}_DEPENDENCIES "")
-
-SlicerMacroCheckExternalProjectDependency(${proj})
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
+  set(${proj}_DEPENDENCIES "")
+
+  SlicerMacroCheckExternalProjectDependency(${proj})
+
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
@@ -52,13 +53,17 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   if(WIN32) # If windows, no recompilation so just download binary
     set(FFTW_DOWNLOAD_ARGS
-      URL "ftp://ftp.fftw.org/pub/fftw/fftw-3.3.3-dll64.zip")
+      URL "ftp://ftp.fftw.org/pub/fftw/fftw-3.3.4-dll64.zip")
   else(WIN32) # Download source code and recompile
     set(FFTW_DOWNLOAD_ARGS
-      URL "http://www.fftw.org/fftw-3.3.3.tar.gz"
-      URL_MD5 0a05ca9c7b3bfddc8278e7c40791a1c2)
+      URL "http://www.fftw.org/fftw-3.3.4.tar.gz"
+      URL_MD5 2edab8c06b24feeb3b82bbb3ebf3e7b3)
   endif(WIN32)
-
+  # Configure InstallFFTW
+  configure_file(
+    SuperBuild/External_FFTW_install.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/FFTW_install.cmake
+    @ONLY)
   ### --- End Project specific additions
   ExternalProject_Add(${proj}
     ${FFTW_DOWNLOAD_ARGS}
@@ -72,9 +77,19 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
     INSTALL_COMMAND ""
-    BUILD_COMMAND ${CMAKE_COMMAND} -DTOP_BINARY_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR} -P ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/InstallFFTW.cmake # -DARGNAME:TYPE=VALUE -P <cmake file> = Process script mode
+    BUILD_COMMAND ${CMAKE_COMMAND} -DTOP_BINARY_DIR:PATH=${CMAKE_CURRENT_BINARY_DIR} -P ${CMAKE_CURRENT_BINARY_DIR}/FFTW_install.cmake # -DARGNAME:TYPE=VALUE -P <cmake file> = Process script mode
     )
-  set(${extProjName}_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install)
+  set( ${extProjName}_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install )
+  set( ${extProjName}_INCLUDE_PATH ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install/include )
+  if(WIN32)
+    set( ${extProjName}D_LIB ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install/lib/fftw3.lib )
+    set( ${extProjName}F_LIB ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install/lib/fftw3f.lib )
+  else()
+    set( ${extProjName}D_LIB ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install/lib/libfftw3.a )
+    set( ${extProjName}F_LIB ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install/lib/libfftw3f.a )
+    set( ${extProjName}D_THREADS_LIB ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install/lib/libfftw3_threads.a )
+    set( ${extProjName}F_THREADS_LIB ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install/lib/libfftw3f_threads.a )
+  endif()
 else()
   if(${USE_SYSTEM_${extProjName}})
     find_package(${extProjName} REQUIRED)

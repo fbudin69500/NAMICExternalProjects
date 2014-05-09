@@ -37,18 +37,15 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set( ${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT ON )
-set( ${PRIMARY_PROJECT_NAME}_USE_QT TRUE )
-set(${proj}_DEPENDENCIES DCMTK ITKv4 SlicerExecutionModel VTK BRAINSTools ANTs Qt4 )
-#if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-#endif()
-#set( USE_QT TRUE )
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
-
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
+  # Set dependency list
+  set( ${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT ON )
+  set( ${PRIMARY_PROJECT_NAME}_USE_QT TRUE )
+  set(${proj}_DEPENDENCIES DCMTK ITKv4 SlicerExecutionModel VTK BRAINSTools ANTs Qt4 )
+
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
+
   #message(STATUS "${__indent}Adding project ${proj}")
 
   # Set CMake OSX variable to pass down the external project
@@ -86,11 +83,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DUSE_SYSTEM_VTK:BOOL=ON
       -DUSE_SYSTEM_DCMTK:BOOL=ON
       -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
-      -DITK_DIR:PATH=${ITK_DIR}
-      -DVTK_DIR:PATH=${VTK_DIR}
-      -DDCMTK_DIR:PATH=${DCMTK_DIR}
       -DGenerateCLP_DIR:PATH=${GenerateCLP_DIR}
-      -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
       -DBRAINSCommonLib_DIR:PATH=${BRAINSCommonLib_DIR}
       -D${proj}_USE_QT:BOOL=${LOCAL_PROJECT_NAME}_USE_QT
       -DDTIPrepTools_SUPERBUILD:STRING=OFF
@@ -102,7 +95,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   set(${proj}_REPOSITORY https://www.nitrc.org/svn/dtiprep/trunk)
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${${proj}_REPOSITORY}
-    SVN_REVISION -r "282"
+    SVN_REVISION -r "298"
     SVN_USERNAME slicerbot
     SVN_PASSWORD slicer
     SOURCE_DIR ${EXTERNAL_SOURCE_DIRECTORY}/${proj}

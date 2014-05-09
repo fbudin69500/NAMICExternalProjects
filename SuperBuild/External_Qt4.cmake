@@ -42,14 +42,13 @@ find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} COMPONENTS QtCore
 SlicerMacroEmptyExternalProject(${proj} "${${proj}_DEPENDENCIES}")
 
 list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS 
-    ${CMAKE_PROJECT_NAME}_USE_QT:BOOL
     QT_QMAKE_EXECUTABLE:PATH
     QT_MOC_EXECUTABLE:PATH
     QT_UIC_EXECUTABLE:PATH
+    ${PRIMARY_PROJECT_NAME}_USE_QT:BOOL
 )
 _expand_external_project_vars()
 set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 
-set( ${PRIMARY_PROJECT_NAME}_USE_QT TRUE )
 ProjectDependancyPop(CACHED_extProjName extProjName)
 ProjectDependancyPop(CACHED_proj proj)

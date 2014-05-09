@@ -20,6 +20,7 @@ if(NOT USE_GIT_PROTOCOL)
 endif()
 
 find_package(Git REQUIRED)
+find_package(Subversion REQUIRED)
 
 set(EXTERNAL_SOURCE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "Select where external packages will be downloaded" )
 set(EXTERNAL_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "Select where external packages will be compiled and installed" )
@@ -30,6 +31,7 @@ set(EXTERNAL_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} CACHE PATH "Select whe
 include(ExternalProject)
 include(SlicerMacroEmptyExternalProject)
 include(SlicerMacroCheckExternalProjectDependency)
+include(SlicerMacroGetOperatingSystemArchitectureBitness)
 
 # Compute -G arg for configuring external projects with the same CMake generator:
 if(CMAKE_EXTRA_GENERATOR)
@@ -88,6 +90,7 @@ CMAKE_DEPENDENT_OPTION(
 
 set(EXTERNAL_PROJECT_BUILD_TYPE "Release" CACHE STRING "Default build type for support libraries")
 
+set( ${PRIMARY_PROJECT_NAME}_DEPENDENCIES ITKv4 SlicerExecutionModel )
 #------------------------------------------------------------------------------
 # ${PRIMARY_PROJECT_NAME} dependency list
 #------------------------------------------------------------------------------
@@ -155,8 +158,13 @@ foreach( var ${ListProjectsQt} )
   endif()
 endforeach()
 
+set( ${PRIMARY_PROJECT_NAME}_BUILD_ZLIB_SUPPORT ON )
+set( ${PRIMARY_PROJECT_NAME}_BUILD_FFTW_SUPPORT ON )
+set( USE_ITK_Module_MGHIO ON )
 foreach( var ${ListProjectsDICOM} )
   if( BUILD_${var} )
+    set( ${PRIMARY_PROJECT_NAME}_BUILD_TIFF_SUPPORT ON )
+    set( ${PRIMARY_PROJECT_NAME}_BUILD_JPEG_SUPPORT ON )
     set( ${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT ON )
   endif()
 endforeach()
@@ -258,9 +266,6 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   CMAKE_MODULE_LINKER_FLAGS:STRING
   SITE:STRING
   BUILDNAME:STRING
-  PYTHON_EXECUTABLE:FILEPATH
-  PYTHON_INCLUDE_DIR:PATH
-  PYTHON_LIBRARY:FILEPATH
   )
 
 #-----------------------------------------------------------------------------
@@ -298,6 +303,9 @@ list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS
   INSTALL_RUNTIME_DESTINATION:STRING
   INSTALL_LIBRARY_DESTINATION:STRING
   INSTALL_ARCHIVE_DESTINATION:STRING
+  GIT_EXECUTABLE:FILEPATH
+  USE_GIT_PROTOCOL:BOOL
+  Subversion_SVN_EXECUTABLE:FILEPATH
   )
 
 _expand_external_project_vars()

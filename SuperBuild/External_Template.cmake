@@ -37,18 +37,14 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set(${proj}_DEPENDENCIES "")
-#if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-#endif()
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
-
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
 
+  # Set dependency list
+  set(${proj}_DEPENDENCIES "")
+
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
   if(APPLE)
@@ -61,16 +57,15 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   ### --- Project specific additions here
   XXXX You may not need these XXXXXXXXXXXXXXXX
   set(${proj}_DCMTK_ARGS)
-  if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
+  if(${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT)
     set(${proj}_DCMTK_ARGS
       -DXXXXNeed:BOOL=ON
       -DITK_USE_SYSTEM_DCMTK:BOOL=ON
-      -DDCMTK_DIR:PATH=${DCMTK_DIR}
       -DModule_ITKIODCMTK:BOOL=ON
       )
   endif()
 
-  if(${PROJECT_NAME}_BUILD_FFTWF_SUPPORT)
+  if(${PRIMARY_PROJECT_NAME}_BUILD_FFTW_SUPPORT)
     set(${proj}_FFTWF_ARGS
       -DITK_USE_FFTWF:BOOL=ON
       )
@@ -86,7 +81,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       #-DITK_INSTALL_NO_DEVELOPMENT:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
       -DITK_WRAPPING:BOOL=OFF #${BUILD_SHARED_LIBS} ## HACK:  QUICK CHANGE
-      -DITK_USE_SYSTEM_DCMTK:BOOL=${${PROJECT_NAME}_BUILD_DICOM_SUPPORT}
+      -DITK_USE_SYSTEM_DCMTK:BOOL=${${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT}
       ${${proj}_DCMTK_ARGS}
       ${${proj}_FFTWF_ARGS}
     )

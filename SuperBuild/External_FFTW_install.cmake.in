@@ -25,10 +25,21 @@ if(WIN32)
 
 else(WIN32) # Unix-like : recompile
 
+  set(ENV{CC} "@CMAKE_C_COMPILER@ @CMAKE_C_COMPILER_ARG1@")
+  set(ENV{CFLAGS} "@CMAKE_C_FLAGS@ @CMAKE_C_FLAGS_RELEASE@")
+  set(ENV{LDFLAGS} "@CMAKE_LINKER_FLAGS@ @CMAKE_LINKER_FLAGS_RELEASE@")
+
+  set(ENV{LIBS} "$ENV{LIBS}")
+  set(ENV{CPP} "$ENV{CPP}")
+  set(ENV{CPPFLAGS} "$ENV{CPPFLAGS}")
+
+  set(ENV{CXX} "@CMAKE_CXX_COMPILER@ @CMAKE_CXX_COMPILER_ARG1@")
+  set(ENV{CXXFLAGS} "@CMAKE_CXX_FLAGS@ @CMAKE_CXX_FLAGS_RELEASE@")
+
   ## FFTWD
   # Configure Step
   message("[] Configuring FFTWD...")
-  execute_process(COMMAND sh ${TOP_BINARY_DIR}/FFTW/configure --prefix=${TOP_BINARY_DIR}/FFTW-install --enable-static --enable-threads CC=${CMAKE_C_COMPILER} WORKING_DIRECTORY ${TOP_BINARY_DIR}/FFTW-build RESULT_VARIABLE ExitCode)
+  execute_process(COMMAND sh ${TOP_BINARY_DIR}/FFTW/configure --prefix=${TOP_BINARY_DIR}/FFTW-install --enable-static --enable-threads WORKING_DIRECTORY ${TOP_BINARY_DIR}/FFTW-build RESULT_VARIABLE ExitCode)
   CheckExitCodeAndExitIfError()
 
   # Build Step
@@ -44,7 +55,7 @@ else(WIN32) # Unix-like : recompile
   ## FFTWF
   # Configure Step
   message("[] Configuring FFTWF...")
-  execute_process(COMMAND sh ${TOP_BINARY_DIR}/FFTW/configure --prefix=${TOP_BINARY_DIR}/FFTW-install --enable-static --enable-threads --enable-float CC=${CMAKE_C_COMPILER} WORKING_DIRECTORY ${TOP_BINARY_DIR}/FFTW-build RESULT_VARIABLE ExitCode)
+  execute_process(COMMAND sh ${TOP_BINARY_DIR}/FFTW/configure --prefix=${TOP_BINARY_DIR}/FFTW-install --enable-static --enable-threads --enable-float WORKING_DIRECTORY ${TOP_BINARY_DIR}/FFTW-build RESULT_VARIABLE ExitCode)
   CheckExitCodeAndExitIfError()
 
   # Build Step

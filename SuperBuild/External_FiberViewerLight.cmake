@@ -37,18 +37,15 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set( ${PRIMARY_PROJECT_NAME}_USE_QT TRUE )
-set(${proj}_DEPENDENCIES ITKv4 SlicerExecutionModel Qt4 VTK QWT)
-#if(${PROJECT_NAME}_BUILD_DICOM_SUPPORT)
-#  list(APPEND ${proj}_DEPENDENCIES DCMTK)
-#endif()
-
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
 
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
+  # Set dependency list
+  set( ${PRIMARY_PROJECT_NAME}_USE_QT TRUE )
+  set(${proj}_DEPENDENCIES ITKv4 SlicerExecutionModel Qt4 VTK QWT)
+
+  # Include dependent projects if any
+  SlicerMacroCheckExternalProjectDependency(${proj})
 
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -62,10 +59,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   ### --- Project specific additions here
   set(${proj}_CMAKE_OPTIONS
     -DFiberViewerLight_SUPERBUILD:BOOL=OFF
-    -DVTK_DIR:PATH=${VTK_DIR}
-    -DITK_DIR:PATH=${ITK_DIR}
-    -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
-    -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     -DQWT_INCLUDE_DIR:PATH=${QWT_INCLUDE_DIR}
     -DQWT_LIBRARY:PATH=${QWT_LIBRARY}
     -DINSTALL_RUNTIME_DESTINATION:STRING=bin
@@ -73,7 +66,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY https://www.nitrc.org/svn/fvlight/trunk)
-  set(${proj}_REVISION -r "69")
+  set(${proj}_REVISION -r "70")
 
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${${proj}_REPOSITORY}

@@ -37,13 +37,42 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-# Set dependency list
-set(${proj}_DEPENDENCIES TIFF)
-# Include dependent projects if any
-SlicerMacroCheckExternalProjectDependency(${proj})
-
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
+  # Set dependency list
+  set(${proj}_DEPENDENCIES "" )
+
   #message(STATUS "${__indent}Adding project ${proj}")
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_TIFF_SUPPORT )
+    list(APPEND ${proj}_DEPENDENCIES TIFF)
+  endif()
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_JPEG_SUPPORT )
+    list(APPEND ${proj}_DEPENDENCIES JPEG)
+  endif()
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_ZLIB_SUPPORT )
+    list(APPEND ${proj}_DEPENDENCIES zlib)
+  endif()
+  SlicerMacroCheckExternalProjectDependency(${proj})
+
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_TIFF_SUPPORT )
+    set(${proj}_TIFF_ARGS
+      -DDCMTK_WITH_TIFF:BOOL=ON  # see CTK github issue #25
+       )
+  else()
+    set(${proj}_TIFF_ARGS
+      -DDCMTK_WITH_TIFF:BOOL=OFF
+       )
+  endif()
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_JPEG_SUPPORT )
+    set(${proj}_JPEG_ARGS
+      -DDCMTK_WITH_JPEG:BOOL=ON  # see CTK github issue #25
+      )
+  endif()
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_ZLIB_SUPPORT )
+    set(${proj}_ZLIB_ARGS
+      -DDCMTK_WITH_ZLIB:BOOL=ON
+      )
+  endif()
+
 
   # Set CMake OSX variable to pass down the external project
   set(CMAKE_OSX_EXTERNAL_PROJECT_ARGS)
@@ -68,20 +97,16 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DBUILD_EXAMPLES:BOOL=OFF
       -DBUILD_TESTING:BOOL=OFF
       -DDCMTK_WITH_DOXYGEN:BOOL=OFF
-      -DDCMTK_WITH_ZLIB:BOOL=ON # see CTK github issue #25
       -DDCMTK_WITH_OPENSSL:BOOL=OFF # see CTK github issue #25
       -DDCMTK_WITH_PNG:BOOL=OFF # see CTK github issue #25
-      -DDCMTK_WITH_TIFF:BOOL=ON  # see CTK github issue #25
       -DDCMTK_WITH_XML:BOOL=OFF  # see CTK github issue #25
       -DDCMTK_WITH_ICONV:BOOL=OFF  # see CTK github issue #178
       -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
       -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
-#      -DTIFF_DIR:PATH=${TIFF_DIR}
-      -DTIFF_LIBRARY:FILEPATH=${TIFF_LIBRARY}
-      -DTIFF_INCLUDE_DIR:PATH=${TIFF_INCLUDE_DIR}
-      -DJPEG_LIBRARY:FILEPATH=${JPEG_LIBRARY}
-      -DJPEG_INCLUDE_DIR:PATH=${JPEG_INCLUDE_DIR}
+      ${${proj}_TIFF_ARGS}
+      ${${proj}_JPEG_ARGS}
+      ${${proj}_ZLIB_ARGS}
   )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://github.com/commontk/DCMTK.git)

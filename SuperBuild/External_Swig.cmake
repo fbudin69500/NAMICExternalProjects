@@ -36,26 +36,30 @@ if(DEFINED ${extProjName}_DIR AND NOT EXISTS ${${extProjName}_DIR})
   message(FATAL_ERROR "${extProjName}_DIR variable is defined but corresponds to non-existing directory (${${extProjName}_DIR})")
 endif()
 
-set( TARGET_SWIG_VERSION 2.0.9 )
-if(NOT SWIG_DIR)
+
+if(NOT SWIG_DIR AND NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
+  set(SWIG_TARGET_VERSION 2.0.12)
+  set(SWIG_DOWNLOAD_SOURCE_HASH "c3fb0b2d710cc82ed0154b91e43085a4")
+  set(SWIG_DOWNLOAD_WIN_HASH "3cc7dd131a87972f70fca1490b9e6e6b")
   if(WIN32)
     # swig.exe available as pre-built binary on Windows:
     ExternalProject_Add(${proj}
-      URL http://prdownloads.sourceforge.net/swig/swigwin-${TARGET_SWIG_VERSION}.zip
-      URL_MD5 a1dc34766cf599f49e2092f7973c85f4
-      SOURCE_DIR ${EXTERNAL_SOURCE_DIRECTORY}/swigwin-${TARGET_SWIG_VERSION}
-      ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
+      URL http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=${SWIG_DOWNLOAD_WIN_HASH}&name=swigwin-${SWIG_TARGET_VERSION}.zip
+      URL_MD5 ${SWIG_DOWNLOAD_WIN_HASH}
+      SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/swigwin-${SWIG_TARGET_VERSION}"
       CONFIGURE_COMMAND ""
       BUILD_COMMAND ""
       INSTALL_COMMAND ""
+      UPDATE_COMMAND ""
       )
 
     set(SWIG_DIR ${EXTERNAL_BINARY_DIRECTORY}/swigwin-${TARGET_SWIG_VERSION}) # ??
     set(SWIG_EXECUTABLE ${EXTERNAL_BINARY_DIRECTORY}/swigwin-${TARGET_SWIG_VERSION}/swig.exe)
     set(Swig_DEPEND Swig)
   else()
+    # not windows
     # Set dependency list
-    set(${proj}_DEPENDENCIES "PCRE")
+    set(${proj}_DEPENDENCIES PCRE python)
 
     # Include dependent projects if any
     SlicerMacroCheckExternalProjectDependency(${proj})
@@ -72,6 +76,8 @@ if(NOT SWIG_DIR)
     set(swig_binary_dir ${EXTERNAL_BINARY_DIRECTORY}/Swig-prefix/src/Swig-build)
     set(swig_source_dir ${EXTERNAL_BINARY_DIRECTORY}/Swig-prefix/src/Swig)
     set(swig_install_dir ${EXTERNAL_BINARY_DIRECTORY}/Swig/install)
+    #octave is not necessary and configuration generates an error if octave if found but mkoctfile is not (part of octave development package)
+    set(swig_config_extra_options --without-octave --with-python=${slicer_PYTHON_REAL_EXECUTABLE})
 
     configure_file(
       ${CMAKE_CURRENT_LIST_DIR}/External_Swig_configure_step.cmake.in
@@ -80,22 +86,20 @@ if(NOT SWIG_DIR)
     set ( swig_CONFIGURE_COMMAND ${CMAKE_COMMAND} -P ${EXTERNAL_BINARY_DIRECTORY}/External_Swig_configure_step.cmake )
 
     ExternalProject_Add(${proj}
-      URL http://prdownloads.sourceforge.net/swig/swig-${TARGET_SWIG_VERSION}.tar.gz
-      URL_MD5  54d534b14a70badc226129159412ea85
-      LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
-      LOG_BUILD     0  # Wrap build in script to to ignore log output from dashboards
-      LOG_TEST      0  # Wrap test in script to to ignore log output from dashboards
-      LOG_INSTALL   0  # Wrap install in script to to ignore log output from dashboards
-      ${cmakeversion_external_update} "${cmakeversion_external_update_value}"
+      URL http://midas3.kitware.com/midas/api/rest?method=midas.bitstream.download&checksum=${SWIG_DOWNLOAD_SOURCE_HASH}&name=swig-${SWIG_TARGET_VERSION}.tar.gz
+      URL_MD5 ${SWIG_DOWNLOAD_SOURCE_HASH}
       CONFIGURE_COMMAND ${swig_CONFIGURE_COMMAND}
-      DEPENDS PCRE
+      DEPENDS ${${proj}_DEPENDENCIES}
       )
 
-    set(SWIG_DIR ${swig_install_dir}/share/swig/${TARGET_SWIG_VERSION})
+    set(${extProjName}_DIR ${swig_install_dir}/share/swig/${TARGET_SWIG_VERSION})
     set(SWIG_EXECUTABLE ${swig_install_dir}/bin/swig)
     set(Swig_DEPEND Swig)
   endif()
 endif()
+list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH SWIG_EXECUTABLE:STRING )
+_expand_external_project_vars()
+set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 
 ProjectDependancyPop(CACHED_extProjName extProjName)
 ProjectDependancyPop(CACHED_proj proj)
