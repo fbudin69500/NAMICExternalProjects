@@ -174,7 +174,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     # Configure python launcher
     configure_file(
       SuperBuild/External_python_customPython_configure.cmake.in
-      ${CMAKE_CURRENT_BINARY_DIR}/External_python_customPython_configure.cmake.in
+      ${CMAKE_CURRENT_BINARY_DIR}/External_python_customPython_configure.cmake
       @ONLY)
     set(python_customPython_configure_args)
 
