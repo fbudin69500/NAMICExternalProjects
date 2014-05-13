@@ -122,7 +122,17 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     list(APPEND EXTERNAL_PROJECT_OPTIONAL_CMAKE_CACHE_ARGS
       -DCMAKE_BUILD_TYPE:STRING=Release)
   endif()
-
+  if( BUILD_PYTHON_SHARED )
+    set( BUILD_PYTHON_STATIC_SHARED_ARGS
+      -DBUILD_SHARED:BOOL=ON
+      -DBUILD_STATIC:BOOL=OFF
+       )
+  else()
+    set( BUILD_PYTHON_STATIC_SHARED_ARGS
+      -DBUILD_SHARED:BOOL=OFF
+      -DBUILD_STATIC:BOOL=ON
+       )
+  endif()
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${git_protocol}://github.com/davidsansome/python-cmake-buildsystem.git"
@@ -135,8 +145,7 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER}
       -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
       -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
-      -DBUILD_SHARED:BOOL=OFF
-      -DBUILD_STATIC:BOOL=ON
+      ${BUILD_PYTHON_STATIC_SHARED_ARGS}
       -DUSE_SYSTEM_LIBRARIES:BOOL=OFF
       -DZLIB_INCLUDE_DIR:PATH=${ZLIB_INCLUDE_DIR}
       -DZLIB_LIBRARY:FILEPATH=${ZLIB_LIBRARY}
@@ -150,9 +159,13 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
   set(python_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install)
 
   if(UNIX)
-    set(python_IMPORT_SUFFIX so)
-    if(APPLE)
-      set(python_IMPORT_SUFFIX dylib)
+    if( BUILD_PYTHON_SHARED )
+      set(python_IMPORT_SUFFIX so)
+      if(APPLE)
+        set(python_IMPORT_SUFFIX dylib)
+      endif()
+    else()
+      set(python_IMPORT_SUFFIX a)
     endif()
     set(slicer_PYTHON_SHARED_LIBRARY_DIR ${python_DIR}/lib)
     set(PYTHON_INCLUDE_DIR ${python_DIR}/include/python2.7)

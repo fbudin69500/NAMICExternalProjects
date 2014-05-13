@@ -139,9 +139,10 @@ set( ListProjects
   SPHARM-PDM
   MriWatcher
   AtlasWerks
+  python
 )
 
- foreach( var ${ListProjects})
+foreach( var ${ListProjects})
   option(BUILD_${var} "build the ${var} project" OFF)
   if( BUILD_${var} )
     List( APPEND ${PRIMARY_PROJECT_NAME}_DEPENDENCIES ${var} )
@@ -159,6 +160,7 @@ foreach( var ${ListProjectsQt} )
   endif()
 endforeach()
 
+
 set( ${PRIMARY_PROJECT_NAME}_BUILD_ZLIB_SUPPORT ON )
 set( ${PRIMARY_PROJECT_NAME}_BUILD_FFTW_SUPPORT ON )
 set( USE_ITK_Module_MGHIO ON )
@@ -170,6 +172,8 @@ foreach( var ${ListProjectsDICOM} )
   endif()
 endforeach()
 
+
+#DWIAtlas is part of DTIProcess. We only ask about building it if DTIProcess is selected to be built
 CMAKE_DEPENDENT_OPTION(
   BUILD_DWIAtlas "Build DWIAtlas as part of DTIProcess" OFF
   "BUILD_DTIProcess" OFF
