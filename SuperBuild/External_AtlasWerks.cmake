@@ -5,6 +5,10 @@ if( NOT EXTERNAL_BINARY_DIRECTORY )
   set( EXTERNAL_BINARY_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} )
 endif()
 
+if( WIN32 OR ( UNIX AND APPLE ) )
+  message( FATAL_ERROR "AtlasWerks only compiles and work on linux" )
+endif()
+
 # Make sure this file is included only once by creating globally unique varibles
 # based on the name of this included file.
 get_filename_component(CMAKE_CURRENT_LIST_FILENAME ${CMAKE_CURRENT_LIST_FILE} NAME_WE)
@@ -95,6 +99,9 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
       -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
+    #We only care about GreedyAtlas so we only build this target.
+    #This works only on linux, but this tool only works on linux anyway
+    BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} GreedyAtlas
     DEPENDS ${${proj}_DEPENDENCIES}
     INSTALL_COMMAND ""
     )
