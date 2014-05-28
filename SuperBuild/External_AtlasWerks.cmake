@@ -79,8 +79,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     )
 
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY GIT_REPOSITORY ${git_protocol}://github.com/NIRALUser/AtlasWerks.git)
-  set( ${proj}_GIT_TAG 928a29d77437f0da4ae8358dfb214996721a2ca5 )
+  set(${proj}_REPOSITORY GIT_REPOSITORY ${git_protocol}://github.com/BRAINSia/AtlasWerks.git)
+  set( ${proj}_GIT_TAG 3bd03912f1fab05b5c1f43cafbf9356ed1e13299 )
 
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
