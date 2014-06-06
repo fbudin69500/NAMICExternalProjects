@@ -42,31 +42,36 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   set(${proj}_DEPENDENCIES "" )
 
   #message(STATUS "${__indent}Adding project ${proj}")
-  if( ${PRIMARY_PROJECT_NAME}_BUILD_TIFF_SUPPORT )
-    list(APPEND ${proj}_DEPENDENCIES TIFF)
-  endif()
-  if( ${PRIMARY_PROJECT_NAME}_BUILD_JPEG_SUPPORT )
-    list(APPEND ${proj}_DEPENDENCIES JPEG)
-  endif()
+################################################################
+###            # see CTK github issue #25#                   ###
+################################################################
+#  if( ${PRIMARY_PROJECT_NAME}_BUILD_TIFF_SUPPORT )
+#    list(APPEND ${proj}_DEPENDENCIES TIFF)
+#  endif()
+#  if( ${PRIMARY_PROJECT_NAME}_BUILD_JPEG_SUPPORT )
+#    list(APPEND ${proj}_DEPENDENCIES JPEG)
+#  endif()
   if( ${PRIMARY_PROJECT_NAME}_BUILD_ZLIB_SUPPORT )
     list(APPEND ${proj}_DEPENDENCIES zlib)
   endif()
   SlicerMacroCheckExternalProjectDependency(${proj})
-
-  if( ${PRIMARY_PROJECT_NAME}_BUILD_TIFF_SUPPORT )
-    set(${proj}_TIFF_ARGS
-      -DDCMTK_WITH_TIFF:BOOL=ON  # see CTK github issue #25
-       )
-  else()
-    set(${proj}_TIFF_ARGS
-      -DDCMTK_WITH_TIFF:BOOL=OFF
-       )
-  endif()
-  if( ${PRIMARY_PROJECT_NAME}_BUILD_JPEG_SUPPORT )
-    set(${proj}_JPEG_ARGS
-      -DDCMTK_WITH_JPEG:BOOL=ON  # see CTK github issue #25
-      )
-  endif()
+################################################################
+###            # see CTK github issue #25#                   ###
+################################################################
+#  if( ${PRIMARY_PROJECT_NAME}_BUILD_TIFF_SUPPORT )
+#    set(${proj}_TIFF_ARGS
+#      -DDCMTK_WITH_TIFF:BOOL=ON
+#       )
+#  else()
+#    set(${proj}_TIFF_ARGS
+#      -DDCMTK_WITH_TIFF:BOOL=OFF
+#       )
+#  endif()
+#  if( ${PRIMARY_PROJECT_NAME}_BUILD_JPEG_SUPPORT )
+#    set(${proj}_JPEG_ARGS
+#      -DDCMTK_WITH_JPEG:BOOL=ON
+#      )
+#  endif()
   if( ${PRIMARY_PROJECT_NAME}_BUILD_ZLIB_SUPPORT )
     set(${proj}_ZLIB_ARGS
       -DDCMTK_WITH_ZLIB:BOOL=ON
@@ -101,6 +106,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DDCMTK_WITH_PNG:BOOL=OFF # see CTK github issue #25
       -DDCMTK_WITH_XML:BOOL=OFF  # see CTK github issue #25
       -DDCMTK_WITH_ICONV:BOOL=OFF  # see CTK github issue #178
+      -DDCMTK_WITH_JPEG:BOOL=OFF  # see CTK github issue #25
+      -DDCMTK_WITH_TIFF:BOOL=OFF  # see CTK github issue #25
       -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
       -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
