@@ -1,9 +1,18 @@
 ####################################   USAGE   ##################################
 # By default, all CLI modules listed in SlicerCLIModules are built
-# If you do not want to compile all modules, define a variable BUILD_Module and set it to OFF
+# If you do not want to compile all modules, define a variable 'BUILD_CLI_${Module}' and set it to OFF
 # before the resolution of external dependencies in your CMakeLists.txt
 # eg: set(BUILD_CLI_MedianImageFilter OFF )
 #     SlicerMacroCheckExternalProjectDependency(${proj})
+#
+# If you are only interested in building a few SlicerCLIModules, you can set use
+# 'SLICER_CLI_DO_NOT_BUILD_ALL' to build only the specified modules, and then set 
+# the appropriate 'BUILD_CLI_${Module}' to ON
+# eg: set(SLICER_CLI_DO_NOT_BUILD_ALL ON )
+#     set(BUILD_CLI_MedianImageFilter OFF )
+#     SlicerMacroCheckExternalProjectDependency(${proj})
+# Beware: certain modules need other modules to be downloaded and compiled too.
+# eg: 'ResampleScalarVectorDWIVolume' needs 'ResampleDTIVolume'
 ##############################################################################
 if( NOT EXTERNAL_SOURCE_DIRECTORY )
   set( EXTERNAL_SOURCE_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/ExternalSources )
@@ -66,10 +75,6 @@ set( SlicerCLIModules
      ConnectedComponent
      DWIJointRicianLMMSEFilter
      DWIRicianLMMSEFilter
-     #DWIToDTIEstimation->vtkITK+MRML
-     #DWIUnbiasedNonLocalMeansFilter->vtkITK+MRML
-     #DiffusionTensorScalarMeasurements->vtkITK+MRML
-     #DiffusionWeightedVolumeMasking->vtkITK+MRML
      GaussianBlurImageFilter
      GradientAnisotropicDiffusion
      GrayscaleFillHoleImageFilter
@@ -78,7 +83,6 @@ set( SlicerCLIModules
      LabelMapSmoothing
      LinearRegistration
      MaskScalarVolume
-     #MultiplyScalarVolumes->vtkITK
      OrientScalarVolume
      OtsuThresholdImageFilter
      OtsuThresholdSegmentation
@@ -87,13 +91,23 @@ set( SlicerCLIModules
      SubtractScalarVolumes
      ThresholdScalarVolume
      VotingBinaryHoleFillingImageFilter
+     #MultiplyScalarVolumes->vtkITK
+     #DWIToDTIEstimation->vtkITK+MRML
+     #DWIUnbiasedNonLocalMeansFilter->vtkITK+MRML
+     #DiffusionTensorScalarMeasurements->vtkITK+MRML
+     #DiffusionWeightedVolumeMasking->vtkITK+MRML
    )
 unset( SLICER_CLI_TO_BUILD )
+if( SLICER_CLI_DO_NOT_BUILD_ALL )
+  set( DEFAULT_CLI_BUILD OFF )
+else()
+  set( DEFAULT_CLI_BUILD ON )
+endif()
 foreach( var ${SlicerCLIModules})
   if( DEFINED BUILD_CLI_${var} ) 
     list(APPEND SLICER_CLI_TO_BUILD -DBUILD_CLI_${var}:BOOL=${BUILD_CLI_${var}} )
   else()
-    list(APPEND SLICER_CLI_TO_BUILD -DBUILD_CLI_${var}:BOOL=ON )
+    list(APPEND SLICER_CLI_TO_BUILD -DBUILD_CLI_${var}:BOOL=${DEFAULT_CLI_BUILD} )
   endif()
   if( DEFINED StringModules )#Even if we don't want to build on module, we still download it's code, because another module might depend on it
     set(StringModules "${StringModules} ${var}" )
@@ -119,13 +133,13 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     -DUSE_SYSTEM_VTK:BOOL=ON
     -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
     ${SLICER_CLI_TO_BUILD}
-    -Dcli-modules_SUPERBUILD:BOOL=ON
+    -Dcli-modules_SUPERBUILD:BOOL=OFF
     -DSlicer_Revision:STRING=22599#Builds Slicer extension at SVN revision 22599 (=Slicer 4.3.1)
     )
 
   ### --- End Project specific additions
   set( ${proj}_REPOSITORY ${git_protocol}://github.com/fbudin69500/SlicerCLI.git )
-  set( ${proj}_GIT_TAG 1d432c3dacc02de83c98bce1adbe350bb66a38a3 )
+  set( ${proj}_GIT_TAG cecefcd1d67bb542dfeb2f0923e6d11cf49b9550 )
   if( NOT DEFINED Slicer_Revision )
     set( Slicer_Revision 0 ) 
   endif()
@@ -150,7 +164,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     PATCH_COMMAND ${CMAKE_COMMAND} -DSlicer_Revision:STRING=${Slicer_Revision} -DStringModules:STRING="${StringModules}" -DSubversion_SVN_EXECUTABLE:FILEPATH=${Subversion_SVN_EXECUTABLE} -DDOWNLOAD_DIR:PATH=${EXTERNAL_SOURCE_DIRECTORY}/${proj} -P ${EXTERNAL_SOURCE_DIRECTORY}/${proj}/SuperBuild/SlicerExecutionModelDownload.cmake
     DEPENDS
       ${${proj}_DEPENDENCIES}
-    INSTALL_COMMAND ""
   )
   set(${extProjName}_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build)
 else()
