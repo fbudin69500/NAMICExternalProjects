@@ -6,9 +6,9 @@
 #     SlicerMacroCheckExternalProjectDependency(${proj})
 #
 # If you are only interested in building a few SlicerCLIModules, you can set use
-# 'SLICER_CLI_DO_NOT_BUILD_ALL' to build only the specified modules, and then set 
+# 'SLICER_CLI_DEFAULT_DO_NOT_BUILD' to build only the specified modules, and then set 
 # the appropriate 'BUILD_CLI_${Module}' to ON
-# eg: set(SLICER_CLI_DO_NOT_BUILD_ALL ON )
+# eg: set(SLICER_CLI_DEFAULT_DO_NOT_BUILD ON )
 #     set(BUILD_CLI_MedianImageFilter OFF )
 #     SlicerMacroCheckExternalProjectDependency(${proj})
 # Beware: certain modules need other modules to be downloaded and compiled too.
@@ -98,7 +98,7 @@ set( SlicerCLIModules
      #DiffusionWeightedVolumeMasking->vtkITK+MRML
    )
 unset( SLICER_CLI_TO_BUILD )
-if( SLICER_CLI_DO_NOT_BUILD_ALL )
+if( SLICER_CLI_DEFAULT_DO_NOT_BUILD )
   set( DEFAULT_CLI_BUILD OFF )
 else()
   set( DEFAULT_CLI_BUILD ON )
