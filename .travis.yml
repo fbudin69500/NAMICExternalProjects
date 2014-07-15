@@ -2,23 +2,21 @@ language: cpp
 compiler:
   - gcc
   - clang
-before_script:
-  - echo $TRAVIS_BUILD_DIR
-  - cd ..
-  - current_dir=`pwd`
+env:
+  - PROJECT=NAMICExternalProjects cmake_package=cmake-2.8.12.2
+install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq phonon-backend-gstreamer
   - sudo apt-get install -qq qt-sdk
-  - cmake_package="cmake-2.8.12.2"
+  - cd $TRAVIS_BUILD_DIR/..
   - wget http://www.cmake.org/files/v2.8/$cmake_package.tar.gz -v -O $cmake_package.tar.gz
   - tar -xzvf $cmake_package.tar.gz
   - cd $cmake_package
-  - cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_USE_OPENSSL:BOOL=ON && make && sudo make install
-  - cd $current_dir
+  - cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_USE_OPENSSL:BOOL=ON && sudo make install
+before_script:
+  - cd $TRAVIS_BUILD_DIR/..
 # Change this to your needs
 script:
-  - project_dir="NAMICExternalProjects"
-  - mkdir ${project_dir}-build && cd ${project_dir}-build
-  - pwd
+  - mkdir ${PROJECT}-build && cd ${PROJECT}-build
   - cmake -DBUILD_ITKTransformTools:BOOL=ON $TRAVIS_BUILD_DIR
   - make
