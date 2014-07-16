@@ -18,5 +18,27 @@ before_script:
 # Change this to your needs
 script:
   - mkdir ${PROJECT}-build && cd ${PROJECT}-build
-  - cmake -DBUILD_ITKTransformTools:BOOL=ON $TRAVIS_BUILD_DIR
+  - cmake >
+       -DBUILD_ABC:BOOL=ON
+       -DBUILD_ANTs:BOOL=ON
+       -DBUILD_AtlasWerks:BOOL=ON
+       -DBUILD_BRAINSTools:BOOL=ON
+       -DBUILD_DTIAtlasBuilder:BOOL=ON
+       -DBUILD_DTIPrep:BOOL=ON
+       -DBUILD_DTIProcess:BOOL=ON
+       -DBUILD_DTIReg:BOOL=ON
+       -DBUILD_DTI_Tract_Stat:BOOL=ON
+       -DBUILD_FiberViewerLight:BOOL=ON
+       -DBUILD_ITKTransformTools:BOOL=ON
+       -DBUILD_MriWatcher:BOOL=ON
+       -DBUILD_ResampleDTIlogEuclidean:BOOL=ON
+       -DBUILD_SPHARM-PDM:BOOL=ON
+       -DBUILD_ShapePopulationViewer:BOOL=ON
+       -DBUILD_SlicerCLI:BOOL=ON
+       -DBUILD_SlicerJointRicianAnisotropicLMMSEFilter:BOOL=ON
+       -DBUILD_UKF:BOOL=ON
+       -DBUILD_UnbiasedNonLocalMeans:BOOL=ON
+       -DBUILD_niral_utilities:BOOL=ON
+       -DBUILD_python:BOOL=ON
+       $TRAVIS_BUILD_DIR
   - make
