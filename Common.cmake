@@ -82,7 +82,11 @@ SETIFEMPTY(BRAINSTools_CLI_INSTALL_RUNTIME_DESTINATION ${CMAKE_INSTALL_RUNTIME_D
 #-------------------------------------------------------------------------
 # Augment compiler flags
 #-------------------------------------------------------------------------
-include(ITKSetStandardCompilerFlags)
+option(DO_NOT_SET_ITK_STANDARD_COMPILER_FLAGS "Do not set ITK standard compiler flags to minimize the number of line printed while compiling (useful for travis-ci)" OFF)
+mark_as_advanced( DO_NOT_SET_ITK_STANDARD_COMPILER_FLAGS )
+if( NOT DO_NOT_SET_ITK_STANDARD_COMPILER_FLAGS )
+  include(ITKSetStandardCompilerFlags)
+endif()
 #------------------------------------------------------------------------
 # Check for clang -- c++11 necessary for boost
 #------------------------------------------------------------------------

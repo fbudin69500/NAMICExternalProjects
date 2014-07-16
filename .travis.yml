@@ -5,14 +5,15 @@ compiler:
 env:
   - PROJECT=NAMICExternalProjects cmake_package=cmake-2.8.12.2
 install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq phonon-backend-gstreamer
-  - sudo apt-get install -qq qt-sdk
+  - sudo apt-get update -qq &>/dev/null
+  - sudo apt-get install -qq phonon-backend-gstreamer &> /dev/null
+  - sudo apt-get install -qq qt-sdk &> /dev/null
   - cd $TRAVIS_BUILD_DIR/..
   - wget http://www.cmake.org/files/v2.8/$cmake_package.tar.gz -v -O $cmake_package.tar.gz
-  - tar -xzvf $cmake_package.tar.gz
+  - tar -xzf $cmake_package.tar.gz
   - cd $cmake_package
-  - cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_USE_OPENSSL:BOOL=ON && sudo make -j2 install
+  - cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_USE_OPENSSL:BOOL=ON &> /dev/null
+  - sudo make -j2 install &> /dev/null
 before_script:
   - cd $TRAVIS_BUILD_DIR/..
 # Change this to your needs
@@ -40,5 +41,7 @@ script:
        -DBUILD_UnbiasedNonLocalMeans:BOOL=ON
        -DBUILD_niral_utilities:BOOL=ON
        -DBUILD_python:BOOL=ON
-       $TRAVIS_BUILD_DIR
+       -DCMAKE_BUILD_TYPE:STRING=Release
+       -DDO_NOT_SET_ITK_STANDARD_COMPILER_FLAGS:BOOL=ON
+       $TRAVIS_BUILD_DIR &> /dev/null
   - make -j2
