@@ -12,7 +12,7 @@ install:
   - wget http://www.cmake.org/files/v2.8/$cmake_package.tar.gz -v -O $cmake_package.tar.gz
   - tar -xzvf $cmake_package.tar.gz
   - cd $cmake_package
-  - cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_USE_OPENSSL:BOOL=ON && sudo make install
+  - cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_USE_OPENSSL:BOOL=ON && sudo make -j2 install
 before_script:
   - cd $TRAVIS_BUILD_DIR/..
 # Change this to your needs
