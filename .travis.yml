@@ -41,4 +41,4 @@ script:
        -DBUILD_niral_utilities:BOOL=ON
        -DBUILD_python:BOOL=ON
        $TRAVIS_BUILD_DIR
-  - make
+  - make -j2
