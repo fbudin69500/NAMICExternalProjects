@@ -89,29 +89,31 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     if(USE_VTK_6)
       set(VTK_QT_ARGS
         -DModule_vtkGUISupportQt:BOOL=ON
+        -DModule_vtkViewsQt:BOOL=ON
         )
     else()
-      set(VTK_QT_ARGS)
-    endif()
-    if(NOT APPLE)
+      if(NOT APPLE)
       set(VTK_QT_ARGS
         #-DDESIRED_QT_VERSION:STRING=4 # Unused
         -DVTK_USE_GUISUPPORT:BOOL=ON
         -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
         -DVTK_USE_QT:BOOL=ON
+        -DVTK_USE_QTCHARTS:BOOL=ON
         )
-    else()
-      set(VTK_QT_ARGS
-        -DVTK_USE_CARBON:BOOL=OFF
-        # Default to Cocoa, VTK/CMakeLists.txt will enable Carbon and disable cocoa if needed
-        -DVTK_USE_COCOA:BOOL=ON
-        -DVTK_USE_X:BOOL=OFF
-        #-DVTK_USE_RPATH:BOOL=ON # Unused
-        #-DDESIRED_QT_VERSION:STRING=4 # Unused
-        -DVTK_USE_GUISUPPORT:BOOL=ON
-        -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
-        -DVTK_USE_QT:BOOL=ON
-        )
+      else()
+        set(VTK_QT_ARGS
+          -DVTK_USE_CARBON:BOOL=OFF
+          # Default to Cocoa, VTK/CMakeLists.txt will enable Carbon and disable cocoa if needed
+          -DVTK_USE_COCOA:BOOL=ON
+          -DVTK_USE_X:BOOL=OFF
+          #-DVTK_USE_RPATH:BOOL=ON # Unused
+          #-DDESIRED_QT_VERSION:STRING=4 # Unused
+          -DVTK_USE_GUISUPPORT:BOOL=ON
+          -DVTK_USE_QVTK_QTOPENGL:BOOL=ON
+          -DVTK_USE_QT:BOOL=ON
+          -DVTK_USE_QTCHARTS:BOOL=ON
+          )
+      endif()
     endif()
   else()
     set(VTK_QT_ARGS
@@ -227,7 +229,7 @@ else()
   SlicerMacroEmptyExternalProject(${proj} "${${proj}_DEPENDENCIES}")
 endif()
 
-list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH)
+list(APPEND ${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_VARS ${extProjName}_DIR:PATH USE_VTK_6:BOOL )
 _expand_external_project_vars()
 set(COMMON_EXTERNAL_PROJECT_ARGS ${${CMAKE_PROJECT_NAME}_SUPERBUILD_EP_ARGS})
 

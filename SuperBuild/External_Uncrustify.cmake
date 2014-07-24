@@ -33,9 +33,9 @@ set(${extProjName}_REQUIRED_VERSION "")  #If a required version is necessary, th
 #endif()
 
 # Sanity checks
-if(DEFINED ${extProjName}_EXE AND NOT EXISTS ${${extProjName}_EXE})
-  message(FATAL_ERROR "${extProjName}_EXE variable is defined but corresponds to non-existing file")
-endif()
+#if(DEFINED ${extProjName}_EXE AND NOT EXISTS ${${extProjName}_EXE})
+#  message(FATAL_ERROR "${extProjName}_EXE variable is defined but corresponds to non-existing file")
+#endif()
 
 if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) )
   #message(STATUS "${__indent}Adding project ${proj}")
