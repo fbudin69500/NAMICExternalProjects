@@ -123,8 +123,8 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
       -DUSE_BRAINSConstellationDetector:BOOL=OFF
       -DUSE_BRAINSContinuousClass:BOOL=OFF
       -DUSE_BRAINSCut:BOOL=OFF
-      -DUSE_BRAINSDemonWarp:BOOL=OFF
-      -DUSE_BRAINSFit:BOOL=OFF
+      -DUSE_BRAINSDemonWarp:BOOL=ON
+      -DUSE_BRAINSFit:BOOL=ON
       -DUSE_BRAINSFitEZ:BOOL=OFF
       -DUSE_BRAINSTalairach:BOOL=OFF
       -DUSE_BRAINSImageConvert:BOOL=OFF
