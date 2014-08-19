@@ -140,6 +140,7 @@ set( ListProjects
   MriWatcher
   AtlasWerks
   python
+  neoseg
 )
 
 foreach( var ${ListProjects})
