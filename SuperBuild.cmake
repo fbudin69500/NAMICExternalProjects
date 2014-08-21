@@ -104,6 +104,8 @@ set( ListProjectsQt
   FiberViewerLight
   DTIAtlasBuilder 
   DTI_Tract_Stat
+  NeosegPipeline
+  MriWatcher
    )
 
 set( ListProjectsDICOM
@@ -141,6 +143,7 @@ set( ListProjects
   AtlasWerks
   python
   neoseg
+  NeosegPipeline
 )
 
 foreach( var ${ListProjects})
