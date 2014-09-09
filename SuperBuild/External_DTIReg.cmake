@@ -69,7 +69,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY https://www.nitrc.org/svn/dtireg/trunk)
-  set(${proj}_REVISION -r "74")
+  set(${proj}_REVISION -r "75")
 
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${${proj}_REPOSITORY}
