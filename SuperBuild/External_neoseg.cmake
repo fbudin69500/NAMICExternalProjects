@@ -62,7 +62,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "https://www.nitrc.org/svn/neoseg")
-  set(${proj}_SVN_REVISION -r "5")
+  set(${proj}_SVN_REVISION -r "6")
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${${proj}_REPOSITORY}
     SVN_REVISION ${${proj}_SVN_REVISION}
