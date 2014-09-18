@@ -83,7 +83,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set( ${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/NeosegPipeline.git )
-  set( ${proj}_GIT_TAG 19611b1c4ed00b517e4846dc3455c6f82847729e )
+  set( ${proj}_GIT_TAG 85802b0fdbdab3d8207096b72812cc8494b32689 )
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
