@@ -65,8 +65,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     -DCOMPILE_IMAGEMATH:BOOL=ON
     -DCOMPILE_IMAGESTAT:BOOL=ON
     -DCOMPILE_MULTIATLASSEG:BOOL=OFF
-    -DCOMPILE_POLYDATAMERGE:BOOL=OFF
-    -DCOMPILE_POLYDATATRANSFORM:BOOL=OFF
+    -DCOMPILE_POLYDATAMERGE:BOOL=ON
+    -DCOMPILE_POLYDATATRANSFORM:BOOL=ON
     -DCOMPILE_TRANSFORMDEFORMATIONFIELD:BOOL=OFF
     -DCOMPILE_TEXTUREBIOMARKERTOOL:BOOL=OFF
     -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
@@ -77,7 +77,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "https://www.nitrc.org/svn/niral_utilities/trunk")
-  set(${proj}_SVN_REVISION -r "85")
+  set(${proj}_SVN_REVISION -r "88")
   ExternalProject_Add(${proj}
     SVN_REPOSITORY ${${proj}_REPOSITORY}
     SVN_REVISION ${${proj}_SVN_REVISION}
@@ -99,7 +99,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 ## We really do want to install in order to limit # of include paths INSTALL_COMMAND ""
     DEPENDS
       ${${proj}_DEPENDENCIES}
-    INSTALL_COMMAND ""
   )
   set(${extProjName}_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build)
 else()
