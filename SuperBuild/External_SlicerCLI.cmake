@@ -64,11 +64,8 @@ set( SlicerCLIModules
      N4ITKBiasFieldCorrection
      ResampleDTIVolume
      ResampleScalarVectorDWIVolume 
-     AffineRegistration
-     RigidRegistration
      ThresholdScalarVolume
      AddScalarVolumes
-     BSplineDeformableRegistration
      BSplineToDeformationField
      CastScalarVolume
      CheckerBoardFilter
@@ -81,11 +78,8 @@ set( SlicerCLIModules
      HistogramMatching
      ImageLabelCombine
      LabelMapSmoothing
-     LinearRegistration
      MaskScalarVolume
      OrientScalarVolume
-     OtsuThresholdImageFilter
-     OtsuThresholdSegmentation
      RobustStatisticsSegmenter
      SimpleRegionGrowingSegmentation
      SubtractScalarVolumes
@@ -139,7 +133,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set( ${proj}_REPOSITORY ${git_protocol}://github.com/fbudin69500/SlicerCLI.git )
-  set( ${proj}_GIT_TAG cecefcd1d67bb542dfeb2f0923e6d11cf49b9550 )
+  set( ${proj}_GIT_TAG b0333e8c66177f8b6bcd8f069120328e764f1f5f )
   if( NOT DEFINED Slicer_Revision )
     set( Slicer_Revision 0 ) 
   endif()
