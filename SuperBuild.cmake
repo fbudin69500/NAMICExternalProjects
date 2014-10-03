@@ -111,6 +111,7 @@ set( ListProjectsQt
 set( ListProjectsDICOM
   BRAINSTools
   DTIPrep
+  DTIProcess
   )
 
 set( ListProjects
@@ -451,3 +452,4 @@ ExternalProject_Add_Step(${proj} forcebuild
     DEPENDERS build
     ALWAYS 1
   )
+configure_file( Scripts/UpdateNAMICExternalProjects.script.in ${CMAKE_BINARY_DIR}/UpdateNAMICExternalProjects.script @ONLY )
