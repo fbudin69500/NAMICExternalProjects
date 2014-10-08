@@ -145,6 +145,7 @@ set( ListProjects
   python
   neoseg
   NeosegPipeline
+  ReadImageHeader
 )
 
 foreach( var ${ListProjects})
