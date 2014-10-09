@@ -66,7 +66,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set( ${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/FiberViewerLight.git)
-  set( ${proj}_GIT_TAG 58321625f08b686a5495298252db59270ad071e4 )
+  set( ${proj}_GIT_TAG 1be1b6973f1167be50838846c1903ade98ee50a2 )
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
