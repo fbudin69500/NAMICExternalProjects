@@ -62,14 +62,11 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     )
 
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY http://www.nitrc.org/svn/mriwatcher/branches/mriwatcher_qt4)
-  set(${proj}_REVISION -r "16")
-
+  set( ${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/MriWatcher.git)
+  set( ${proj}_GIT_TAG b7a4645d881269a97449b0ed9b260fde66f69a4a )
   ExternalProject_Add(${proj}
-    SVN_REPOSITORY ${${proj}_REPOSITORY}
-    SVN_REVISION ${${proj}_REVISION}
-    SVN_USERNAME slicerbot
-    SVN_PASSWORD slicer
+    GIT_REPOSITORY ${${proj}_REPOSITORY}
+    GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${EXTERNAL_SOURCE_DIRECTORY}/${proj}
     BINARY_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards

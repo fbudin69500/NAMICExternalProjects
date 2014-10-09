@@ -61,7 +61,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     )
 
   ### --- End Project specific additions
-  set( ${proj}_REPOSITORY ${git_protocol}://github.com/fbudin69500/ReadImageHeader.git )
+  set( ${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/ReadImageHeader.git )
   set( ${proj}_GIT_TAG 91484acae0e1fbb814ccccab329c77b1d1323362)
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}

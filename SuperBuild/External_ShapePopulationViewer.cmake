@@ -63,7 +63,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
 set( ${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/ShapePopulationViewer.git )
-  set( ${proj}_GIT_TAG 1a4bb630d60fe3f85f04b98ad895c13e1da12c49 )
+  set( ${proj}_GIT_TAG 415a5b3fb54784f45a2f33fc990a73200c8edbbe )
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

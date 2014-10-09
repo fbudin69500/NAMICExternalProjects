@@ -62,7 +62,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set( ${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/DTIAtlasBuilder.git )
-  set( ${proj}_GIT_TAG 3c338fd24021eb43e97852b42ac147dad8614181 )
+  set( ${proj}_GIT_TAG c1624bc375d21b2dc53313d7efdf5464c61c02ed )
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
