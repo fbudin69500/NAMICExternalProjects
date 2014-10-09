@@ -93,7 +93,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set( ${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/DTIPrep.git )
-  set( ${proj}_GIT_TAG 7873daf8b5438a4824316b81acbe30a66efc6fe0 )
+  set( ${proj}_GIT_TAG 6d9fdc556d5b20be7ab6bd141bf7a187ab7933a7 )
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
