@@ -125,14 +125,7 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
       -DUSE_BRAINSCut:BOOL=OFF
       -DUSE_BRAINSDemonWarp:BOOL=ON
       -DUSE_BRAINSFit:BOOL=ON
-      -DUSE_BRAINSFitEZ:BOOL=OFF
       -DUSE_BRAINSTalairach:BOOL=OFF
-      -DUSE_BRAINSImageConvert:BOOL=OFF
-      -DUSE_BRAINSInitializedControlPoints:BOOL=OFF
-      -DUSE_BRAINSLandmarkInitializer:BOOL=OFF
-      -DUSE_BRAINSMultiModeSegment:BOOL=OFF
-      -DUSE_BRAINSMush:BOOL=OFF
-      -DUSE_BRAINSImageConvert:BOOL=OFF
       -DUSE_BRAINSInitializedControlPoints:BOOL=OFF
       -DUSE_BRAINSLandmarkInitializer:BOOL=OFF
       -DUSE_BRAINSMultiModeSegment:BOOL=OFF
@@ -141,15 +134,21 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
       -DUSE_BRAINSResample:BOOL=OFF
       -DUSE_BRAINSSnapShotWriter:BOOL=OFF
       -DUSE_BRAINSSurfaceTools:BOOL=OFF
-      -DUSE_BRAINSTransformConvert:BOOL=OFF
+      -DUSE_BRAINSTransformConvert:BOOL=ON
       -DUSE_BRAINSPosteriorToContinuousClass:BOOL=OFF
       -DUSE_BRAINSCreateLabelMapFromProbabilityMaps:BOOL=OFF
       -DUSE_DebugImageViewer:BOOL=OFF
+      -DUSE_BRAINSDWICleanup:BOOL=OFF
+      -DUSE_DWIConvert:BOOL=ON
       -DUSE_GTRACT:BOOL=OFF
       -DUSE_ICCDEF:BOOL=OFF
-      -DUSE_ConvertBetweenFileFormats:BOOL=OFF
+      -DUSE_ConvertBetweenFileFormats:BOOL=ON
+      -DUSE_BRAINSMultiSTAPLE:BOOL=OFF
+      -DUSE_BRAINSStripRotation:BOOL=OFF
       -DUSE_ImageCalculator:BOOL=OFF
       -DUSE_AutoWorkup:BOOL=OFF
+      -DUSE_ReferenceAtlas:BOOL=OFF
+      -DUSE_BRAINSLabelStats:BOOL=OFF
       ${BRAINS_ANTS_PARAMS}
     )
 
