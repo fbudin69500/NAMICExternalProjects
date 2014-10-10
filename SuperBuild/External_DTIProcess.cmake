@@ -71,6 +71,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     -DUSE_SYSTEM_VTK:BOOL=ON
     -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
     -DDTIProcess_SUPERBUILD:BOOL=OFF
+    -DBUILD_PolyDataMerge:BOOL=OFF
+    -DBUILD_PolyDataTransform:BOOL=OFF
     -DEXECUTABLES_ONLY:BOOL=ON
     )
 
