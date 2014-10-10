@@ -149,6 +149,12 @@ cd $SOURCE_DIR
 #Update NAMICExternalProjects
 if [ $# -eq 1 ] && [ "$1" == "push" ]
 then
-  git push
+  echo "-----------------------------------------------------"
+  echo "-----------------------------------------------------"
+  for remoteRepo in `git remote`
+  do
+    echo "Pushing to $remoteRepo"
+    git push $remoteRepo master
+  done
 fi
 cd $currentDir
