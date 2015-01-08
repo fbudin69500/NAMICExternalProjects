@@ -73,6 +73,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     -DDTIProcess_SUPERBUILD:BOOL=OFF
     -DBUILD_PolyDataMerge:BOOL=OFF
     -DBUILD_PolyDataTransform:BOOL=OFF
+    -DBUILD_CropDTI:BOOL=OFF
     -DEXECUTABLES_ONLY:BOOL=ON
     )
 
