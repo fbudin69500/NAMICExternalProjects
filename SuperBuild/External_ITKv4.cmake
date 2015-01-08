@@ -66,8 +66,18 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   if( ${PRIMARY_PROJECT_NAME}_BUILD_ZLIB_SUPPORT )
     list(APPEND ${proj}_DEPENDENCIES zlib)
   endif()
+  if( ${PRIMARY_PROJECT_NAME}_BUILD_ITK_VTK_SUPPORT )
+    list(APPEND ${proj}_DEPENDENCIES VTK)
+  endif()
   # Include dependent projects if any
   SlicerMacroCheckExternalProjectDependency(${proj})
+
+  if(${PRIMARY_PROJECT_NAME}_BUILD_ITK_VTK_SUPPORT) ## VTK support in ITK
+   set( ITK_VTK_OPTIONS
+     -DVTK_DIR:PATH=${VTK_DIR}
+     -DModule_ITKVtkGlue:BOOL=ON
+    )
+  endif()
 
   set(${proj}_DCMTK_ARGS)
   if(${PRIMARY_PROJECT_NAME}_BUILD_DICOM_SUPPORT)
@@ -79,7 +89,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   endif()
 
   if(${PRIMARY_PROJECT_NAME}_BUILD_FFTW_SUPPORT)
-    set(${proj}_FFTWF_ARGS
+    set(${proj}_FFTW_ARGS
       -DITK_USE_FFTWF:BOOL=ON
       -DITK_USE_FFTWD:BOOL=ON
       -DFFTW_DIR:PATH=${FFTW_DIR}
@@ -152,11 +162,11 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DBUILD_EXAMPLES:BOOL=OFF
       -DCMAKE_INSTALL_PREFIX:PATH=${${proj}_INSTALL_PATH}
       -DITK_LEGACY_REMOVE:BOOL=OFF
-      -DITK_FUTURE_LEGACY_REMOVE:=BOOL=ON
+#      -DITK_FUTURE_LEGACY_REMOVE:=BOOL=ON
       -DITKV3_COMPATIBILITY:BOOL=ON
       -DITK_USE_REVIEW:BOOL=ON
       -DModule_ITKReview:BOOL=ON
-      #-DITK_INSTALL_NO_DEVELOPMENT:BOOL=ON
+      -DITK_INSTALL_NO_DEVELOPMENT:BOOL=OFF
       -DITK_BUILD_DEFAULT_MODULES:BOOL=ON
       -DKWSYS_USE_MD5:BOOL=ON # Required by SlicerExecutionModel
       -DITK_WRAPPING:BOOL=OFF #${BUILD_SHARED_LIBS} ## HACK:  QUICK CHANGE
@@ -167,15 +177,14 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       ${${proj}_ZLIB_ARGS}
       ${${proj}_DCMTK_ARGS}
       ${${proj}_WRAP_ARGS}
-      ${${proj}_FFTWF_ARGS}
-      ${${proj}_FFTWD_ARGS}
+      ${${proj}_FFTW_ARGS}
+      ${ITK_VTK_OPTIONS}
       ${${proj}_CMAKE_ADDITIONAL_OPTIONS}
     )
   ### --- End Project specific additions
   set(${proj}_REPOSITORY ${git_protocol}://itk.org/ITK.git)
   set(${proj}_GIT_TAG 12f11d1f408680d24b6380856dd28dbe43582285 )
   set(ITK_VERSION_ID ITK-4.8)
-
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}

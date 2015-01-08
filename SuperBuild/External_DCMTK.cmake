@@ -111,8 +111,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
       -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
       -DDCMTK_WITH_WRAP:BOOL=OFF   # CTK does not build on Mac with this option turned ON due to library dependencies missing
-      ${${proj}_TIFF_ARGS}
-      ${${proj}_JPEG_ARGS}
+#      ${${proj}_TIFF_ARGS}
+#      ${${proj}_JPEG_ARGS}
       ${${proj}_ZLIB_ARGS}
   )
   ### --- End Project specific additions

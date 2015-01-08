@@ -39,7 +39,7 @@ endif()
 
 if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" ) ) )
 # Set dependency list
-  set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel VTK DCMTK teem OpenCV zlib )
+  set(${extProjName}_DEPENDENCIES ITKv4 SlicerExecutionModel VTK DCMTK teem OpenCV zlib python)
 
   #message(STATUS "${__indent}Adding project ${proj}")
   if(USE_ANTs)
@@ -107,8 +107,9 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
       -DUSE_SYSTEM_Teem:BOOL=ON
       -DUSE_SYSTEM_OpenCV:BOOL=ON
       -DUSE_SYSTEM_ReferenceAtlas:BOOL=ON
-      -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
+      -DPYTHON_LIBRARIES:FILEPATH=${PYTHON_LIBRARIES}
       -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
+      -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
       -DUSE_SYSTEM_SlicerExecutionModel:BOOL=ON
       -DDCMTK_config_INCLUDE_DIR:PATH=${DCMTK_DIR}/include
       -DSlicerExecutionModel_DIR:PATH=${SlicerExecutionModel_DIR}
@@ -154,7 +155,7 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
 
   ### --- End Project specific additions
   set(${proj}_REPOSITORY "${git_protocol}://github.com/BRAINSia/BRAINSTools.git")
-  set(${proj}_GIT_TAG "33b739e7e6a414be41d44aca028b1304a2c0a440")
+  set(${proj}_GIT_TAG "73a6e2d6c2488823ba7d312471982a1897099c98")
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -173,6 +174,7 @@ if(NOT ( DEFINED "${extProjName}_SOURCE_DIR" OR ( DEFINED "USE_SYSTEM_${extProjN
       ${COMMON_EXTERNAL_PROJECT_ARGS}
       ${${proj}_CMAKE_OPTIONS}
     INSTALL_COMMAND ""
+    PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/BRAINSTools-patch-FindITKUtil.cmake ${EXTERNAL_SOURCE_DIRECTORY}/${proj}/CMake/FindITKUtil.cmake
     DEPENDS
       ${${extProjName}_DEPENDENCIES}
     )

@@ -63,7 +63,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set( ${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/MriWatcher.git)
-  set( ${proj}_GIT_TAG b7a4645d881269a97449b0ed9b260fde66f69a4a )
+  set( ${proj}_GIT_TAG e6bc99a76a91509d0b9f2445114410ae158beaef )
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
@@ -82,7 +82,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       ${${proj}_CMAKE_OPTIONS}
       -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
     DEPENDS ${${proj}_DEPENDENCIES}
-    PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/External_MriWatcher_patch-CMakeLists.txt ${EXTERNAL_SOURCE_DIRECTORY}/${proj}/CMakeLists.txt
     INSTALL_COMMAND ""
     )
 

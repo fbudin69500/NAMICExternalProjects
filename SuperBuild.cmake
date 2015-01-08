@@ -107,7 +107,9 @@ set( ListProjectsQt
   NeosegPipeline
   MriWatcher
    )
-
+set( ListProjectsITK_VTK
+  BRAINSTools
+)
 set( ListProjectsDICOM
   BRAINSTools
   DTIPrep
@@ -166,9 +168,15 @@ foreach( var ${ListProjectsQt} )
   endif()
 endforeach()
 
+foreach( var ${ListProjectsITK_VTK} )
+  if( BUILD_${var} )
+    set( ${PRIMARY_PROJECT_NAME}_BUILD_ITK_VTK_SUPPORT TRUE )
+  endif()
+endforeach()
 
 set( ${PRIMARY_PROJECT_NAME}_BUILD_ZLIB_SUPPORT ON )
 set( ${PRIMARY_PROJECT_NAME}_BUILD_FFTW_SUPPORT ON )
+set( USE_ANTs ON )
 set( USE_ITK_Module_MGHIO ON )
 foreach( var ${ListProjectsDICOM} )
   if( BUILD_${var} )
