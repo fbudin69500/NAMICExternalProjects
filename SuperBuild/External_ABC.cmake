@@ -57,20 +57,19 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
   set(${proj}_CMAKE_OPTIONS
     --no-warn-unused-cli # HACK Only expected variables should be passed down.
     -DCOMPILE_SLICER4COMMANDLINE:BOOL=OFF
+    -DCOMPILE_BRAINSEG:BOOL=OFF
+    -DCOMPILE_STANDALONEGUI:BOOL=OFF
     -DCOMPILE_COMMANDLINE:BOOL=ON
-    -DSlicer_SOURCE_DIR:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-build#Dummy directory to set the variable so that ABC doesn't try to find Slicer
     )
 
 
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY https://www.nitrc.org/svn/abc/trunk)
-  set(${proj}_REVISION -r "67")
+  set(${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/ABC.git)
+  set(${proj}_GIT_TAG 20788dd86f4dbab4edb695da1f0e75c049d4210f )
 
   ExternalProject_Add(${proj}
-    SVN_REPOSITORY ${${proj}_REPOSITORY}
-    SVN_REVISION ${${proj}_REVISION}
-    SVN_USERNAME slicerbot
-    SVN_PASSWORD slicer
+    GIT_REPOSITORY ${${proj}_REPOSITORY}
+    GIT_TAG ${${proj}_GIT_TAG}
     SOURCE_DIR ${EXTERNAL_SOURCE_DIRECTORY}/${proj}
     BINARY_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build
     LOG_CONFIGURE 0  # Wrap configure in script to ignore log output from dashboards
@@ -89,7 +88,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DCMAKE_INSTALL_PREFIX:PATH=${EXTERNAL_BINARY_DIRECTORY}/${proj}-install
     DEPENDS
       ${${proj}_DEPENDENCIES}
-    PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/External_ABC_patch-CMakeLists.txt ${EXTERNAL_SOURCE_DIRECTORY}/${proj}/CMakeLists.txt
     INSTALL_COMMAND ""
   )
   set(${extProjName}_DIR ${EXTERNAL_BINARY_DIRECTORY}/${proj}-build)
