@@ -61,8 +61,8 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
     )
 
   ### --- End Project specific additions
-  set(${proj}_REPOSITORY ${git_protocol}://batchmake.org/BatchMake.git)
-  set(${proj}_GIT_TAG "7da88ae6027eb4eac363c09834a6e014306f3038")
+  set(${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/BatchMake.git)
+  set(${proj}_GIT_TAG "5e1c185b564ac2acef35ba68fbde370c19ba33de")
 
   #message(STATUS "${__indent}Adding project ${proj}")
   ExternalProject_Add(${proj}
@@ -86,7 +86,6 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
       -DUSE_SPLASHSCREEN:BOOL=OFF
       ${BatchMakeCURLCmakeArg}
     DEPENDS ${${proj}_DEPENDENCIES}
-    PATCH_COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild/External_BatchMake_patch-Zip.c ${EXTERNAL_SOURCE_DIRECTORY}/BatchMake/Utilities/Zip/zip.c
     )
 
   set(${extProjName}_DIR  ${EXTERNAL_BINARY_DIRECTORY}/${proj}-install/lib/BatchMake)
