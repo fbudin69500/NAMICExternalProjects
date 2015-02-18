@@ -8,6 +8,7 @@ install:
   - sudo apt-get update -qq &>/dev/null
   - sudo apt-get install -qq phonon-backend-gstreamer &> /dev/null
   - sudo apt-get install -qq qt-sdk &> /dev/null
+  - sudo apt-get install -qq libxt-dev &> /dev/null
   - cd $TRAVIS_BUILD_DIR/..
   - wget http://www.cmake.org/files/v2.8/$cmake_package.tar.gz -v -O $cmake_package.tar.gz
   - tar -xzf $cmake_package.tar.gz
