@@ -15,6 +15,10 @@ install:
   - cd $cmake_package
   - cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr -DCMAKE_USE_OPENSSL:BOOL=ON &> /dev/null
   - sudo make -j2 install &> /dev/null
+  - wget -O vtk-5.10.1.deb http://www.med.unc.edu/psych/research/niral/files/externaltools/vtkpackage/at_download/file
+  - sudo dpkg -i vtk-5.10.1.deb
+  - wget -O ITKv4.8.0.deb http://www.med.unc.edu/psych/research/niral/files/externaltools/itkpackage/at_download/file
+  - sudo dpkg -i ITKv4.8.0.deb
 before_script:
   - cd $TRAVIS_BUILD_DIR/..
 # Change this to your needs
@@ -44,5 +48,9 @@ script:
        -DBUILD_python:BOOL=ON
        -DCMAKE_BUILD_TYPE:STRING=Release
        -DDO_NOT_SET_ITK_STANDARD_COMPILER_FLAGS:BOOL=ON
+       -DVTK_DIR:PATH=/usr/lib/vtk-5.10
+       -DUSE_SYSTEM_VTK:BOOL=ON
+       -DITK_DIR:PATH=/usr/lib/cmake/ITK-4.8
+       -DUSE_SYSTEM_ITK:BOOL=ON
        $TRAVIS_BUILD_DIR &> /dev/null
   - make -j2
