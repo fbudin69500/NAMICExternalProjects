@@ -31,10 +31,10 @@ script:
        -DBUILD_ABC:BOOL=ON
        -DBUILD_ANTs:BOOL=ON
        -DBUILD_AtlasWerks:BOOL=ON
-       -DBUILD_BRAINSTools:BOOL=ON
+       -DBUILD_BRAINSTools:BOOL=OFF
        -DBUILD_DTIAtlasBuilder:BOOL=ON
-       -DBUILD_DTIPrep:BOOL=ON
-       -DBUILD_DTIProcess:BOOL=ON
+       -DBUILD_DTIPrep:BOOL=OFF
+       -DBUILD_DTIProcess:BOOL=OFF
        -DBUILD_DTIReg:BOOL=ON
        -DBUILD_DTI_Tract_Stat:BOOL=ON
        -DBUILD_FiberViewerLight:BOOL=ON
