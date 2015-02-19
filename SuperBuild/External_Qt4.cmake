@@ -19,7 +19,7 @@ ProjectDependancyPush(CACHED_proj ${proj})
 # SlicerMacroCheckExternalProjectDependency
 set(extProjName Qt) #The find_package known name
 set(proj      Qt4) #This local name
-set(${extProjName}_REQUIRED_VERSION "4.8.6")  #If a required version is necessary, then set this, else leave blank
+#set(${extProjName}_REQUIRED_VERSION "4.8.6")  #If a required version is necessary, then set this, else leave blank
 
 #if(${USE_SYSTEM_${extProjName}})
 #  unset(${extProjName}_DIR CACHE)
@@ -36,7 +36,8 @@ set(${proj}_DEPENDENCIES "" )
 # Include dependent projects if any
 SlicerMacroCheckExternalProjectDependency(${proj})
 
-find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED )
+#find_package(${extProjName} ${${extProjName}_REQUIRED_VERSION} COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED )
+find_package(${extProjName} COMPONENTS QtCore QtGui QtNetwork QtXml REQUIRED )
 # The project is provided using ${extProjName}_DIR, nevertheless since other
 # project may depend on ${extProjName}, let's add an 'empty' one
 SlicerMacroEmptyExternalProject(${proj} "${${proj}_DEPENDENCIES}")
