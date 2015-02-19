@@ -2,6 +2,9 @@ language: cpp
 compiler:
   - gcc
   - clang
+branches:
+  only:
+    - travisCITests
 env:
   - PROJECT=NAMICExternalProjects cmake_package=cmake-2.8.12.2
 install:
@@ -52,5 +55,5 @@ script:
        -DUSE_SYSTEM_VTK:BOOL=ON
        -DITK_DIR:PATH=/usr/lib/cmake/ITK-4.8
        -DUSE_SYSTEM_ITK:BOOL=ON
-       $TRAVIS_BUILD_DIR &> /dev/null
+       $TRAVIS_BUILD_DIR
   - make -j2
