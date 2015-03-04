@@ -63,7 +63,7 @@ if(NOT ( DEFINED "USE_SYSTEM_${extProjName}" AND "${USE_SYSTEM_${extProjName}}" 
 
   ### --- End Project specific additions
   set( ${proj}_REPOSITORY ${git_protocol}://github.com/NIRALUser/SPHARM-PDM.git)
-  set( ${proj}_GIT_TAG 2b4201599c32fce18794fda5734713d7f55d2fca )
+  set( ${proj}_GIT_TAG 4cd0517a6908b2bb3ee01c25a550756ce627b7ba )
   ExternalProject_Add(${proj}
     GIT_REPOSITORY ${${proj}_REPOSITORY}
     GIT_TAG ${${proj}_GIT_TAG}
